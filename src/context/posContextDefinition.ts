@@ -33,6 +33,7 @@ export interface PosContextType {
   setSearchQuery: (query: string) => void;
   addProduct: (product: Omit<Product, 'id' | 'uuid'>) => void;
   updateProduct: (product: Product) => void;
+  deleteProduct: (productId: string) => void;
   adjustStock: (productId: string, delta: number, reason: string) => void;
 
   cart: CartItem[];

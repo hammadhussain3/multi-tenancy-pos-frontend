@@ -166,6 +166,12 @@ export function PosProvider({ children }: { children: ReactNode }) {
     if (isOffline) setPendingSyncCount((c) => c + 1);
   };
 
+  const deleteProduct = (productId: string) => {
+    setProducts((prev) => prev.filter((p) => p.id !== productId));
+    setCart((prev) => prev.filter((item) => item.product.id !== productId));
+    if (isOffline) setPendingSyncCount((c) => c + 1);
+  };
+
   // Khata Payment Processing
   const recordCustomerPayment = (customerId: string, amount: number, narration: string) => {
     const targetCustomer = customers.find((c) => c.id === customerId);
@@ -339,6 +345,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
         setSearchQuery,
         addProduct,
         updateProduct,
+        deleteProduct,
         adjustStock,
         cart,
         addToCart,

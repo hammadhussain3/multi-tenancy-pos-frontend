@@ -6,6 +6,7 @@ import {
   AlertTriangle,
   CheckCircle2,
   Edit2,
+  Trash2,
   Boxes,
   ArrowUpDown,
 } from 'lucide-react';
@@ -14,7 +15,7 @@ import type { Product } from '../../types/pos';
 import { ProductModal } from './ProductModal';
 
 export function InventoryTableView() {
-  const { products, categories, adjustStock, isUrdu } = usePos();
+  const { products, categories, adjustStock, deleteProduct, isUrdu } = usePos();
 
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
@@ -282,6 +283,18 @@ export function InventoryTableView() {
                             title="Edit Product"
                           >
                             <Edit2 className="w-3.5 h-3.5" />
+                          </button>
+
+                          <button
+                            onClick={() => {
+                              if (window.confirm(`Are you sure you want to remove "${prod.name}" from your catalog?`)) {
+                                deleteProduct(prod.id);
+                              }
+                            }}
+                            className="p-1 rounded-lg bg-slate-100 hover:bg-rose-100 text-slate-400 hover:text-rose-600 transition-colors cursor-pointer"
+                            title="Remove Product"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
                           </button>
                         </div>
                       </td>
