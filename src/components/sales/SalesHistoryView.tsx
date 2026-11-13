@@ -35,11 +35,11 @@ export function SalesHistoryView() {
         <div className="flex items-center gap-3">
           <div className="px-4 py-2 rounded-xl bg-white border border-slate-200 shadow-2xs text-xs">
             <span className="text-slate-500 mr-2">Invoices Today:</span>
-            <span className="font-bold text-slate-900 font-mono">{invoices.length}</span>
+            <span className="font-bold text-slate-900">{invoices.length}</span>
           </div>
           <div className="px-4 py-2 rounded-xl bg-white border border-slate-200 shadow-2xs text-xs">
             <span className="text-slate-500 mr-2">Total Sales:</span>
-            <span className="font-black text-emerald-700 font-mono">
+            <span className="font-black text-emerald-700">
               PKR {totalSalesAmount.toLocaleString()}
             </span>
           </div>
@@ -55,7 +55,7 @@ export function SalesHistoryView() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by invoice # or customer phone/name..."
-            className="w-full pl-9 pr-3 py-1.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 font-mono"
+            className="w-full pl-9 pr-3 py-1.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500"
           />
         </div>
       </div>
@@ -86,7 +86,7 @@ export function SalesHistoryView() {
               ) : (
                 filtered.map((inv) => (
                   <tr key={inv.id} className="hover:bg-slate-50/80 transition-colors">
-                    <td className="py-2.5 px-3 font-mono font-bold text-slate-900">
+                    <td className="py-2.5 px-3 font-bold text-slate-900">
                       <div>{inv.invoiceNo}</div>
                       {inv.fbrInvoiceNo && (
                         <div className="text-[10px] text-slate-400 font-normal">
@@ -95,7 +95,7 @@ export function SalesHistoryView() {
                       )}
                     </td>
 
-                    <td className="py-2.5 px-3 text-slate-500 font-mono text-[11px]">
+                    <td className="py-2.5 px-3 text-slate-500 text-[11px]">
                       {inv.date}
                     </td>
 
@@ -103,7 +103,7 @@ export function SalesHistoryView() {
                       {inv.customer ? (
                         <div>
                           <div className="font-bold text-slate-900">{inv.customer.name}</div>
-                          <div className="text-[10px] text-slate-500 font-mono">
+                          <div className="text-[10px] text-slate-500">
                             {inv.customer.phone}
                           </div>
                         </div>
@@ -132,11 +132,11 @@ export function SalesHistoryView() {
                       </div>
                     </td>
 
-                    <td className="py-2.5 px-3 text-right font-mono text-slate-600">
+                    <td className="py-2.5 px-3 text-right text-slate-600 font-semibold">
                       {inv.items.reduce((sum, item) => sum + item.quantity, 0)}
                     </td>
 
-                    <td className="py-2.5 px-3 text-right font-mono font-extrabold text-emerald-700">
+                    <td className="py-2.5 px-3 text-right font-extrabold text-emerald-700">
                       PKR {inv.grandTotal.toLocaleString()}
                     </td>
 

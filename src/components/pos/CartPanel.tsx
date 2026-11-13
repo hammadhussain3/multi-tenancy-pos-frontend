@@ -58,7 +58,7 @@ export function CartPanel() {
             <div className="flex items-center gap-1.5 text-xs font-bold text-slate-900">
               <Receipt className="w-4 h-4 text-indigo-600" />
               <span>{isUrdu ? 'موجودہ بل / ٹوکری' : 'Active Sale Order'}</span>
-              <span className="px-2 py-0.5 rounded-full text-[10px] bg-slate-100 text-slate-700 font-mono font-semibold">
+              <span className="px-2 py-0.5 rounded-full text-[10px] bg-slate-100 text-slate-700 font-semibold">
                 {cart.length} {cart.length === 1 ? 'item' : 'items'}
               </span>
             </div>
@@ -83,7 +83,7 @@ export function CartPanel() {
                     <UserCheck className="w-3.5 h-3.5 text-emerald-600" />
                     <span>{selectedCustomer.name}</span>
                   </div>
-                  <div className="text-[10px] text-slate-500 mt-0.5 font-mono">
+                  <div className="text-[10px] text-slate-500 mt-0.5">
                     {selectedCustomer.phone} •{' '}
                     <span className="text-amber-800 font-semibold">
                       Khata: PKR {selectedCustomer.currentBalance.toLocaleString()}
@@ -144,10 +144,10 @@ export function CartPanel() {
                   >
                     <div>
                       <div className="text-xs font-bold text-slate-900">{c.name}</div>
-                      <div className="text-[11px] text-slate-500 font-mono mt-0.5">{c.phone}</div>
+                      <div className="text-[11px] text-slate-500 mt-0.5">{c.phone}</div>
                     </div>
                     <div className="text-right">
-                      <div className="text-xs font-extrabold text-amber-800 font-mono">
+                      <div className="text-xs font-extrabold text-amber-800">
                         PKR {c.currentBalance.toLocaleString()}
                       </div>
                       <div className="text-[10px] text-slate-500">
@@ -182,7 +182,7 @@ export function CartPanel() {
                     <div className="text-xs font-bold text-slate-900 line-clamp-1">
                       {item.product.name}
                     </div>
-                    <div className="text-[10px] text-slate-500 font-mono mt-0.5">
+                    <div className="text-[10px] text-slate-500 mt-0.5">
                       PKR {item.unitPrice.toLocaleString()} / {item.product.unit}
                     </div>
                   </div>
@@ -210,7 +210,7 @@ export function CartPanel() {
                       onChange={(e) =>
                         updateQuantity(item.product.id, parseInt(e.target.value) || 1)
                       }
-                      className="w-10 text-center bg-transparent text-xs font-bold text-slate-900 focus:outline-none font-mono"
+                      className="w-10 text-center bg-transparent text-xs font-bold text-slate-900 focus:outline-none"
                       min="1"
                     />
                     <button
@@ -231,13 +231,13 @@ export function CartPanel() {
                       onChange={(e) =>
                         updateDiscount(item.product.id, parseFloat(e.target.value) || 0)
                       }
-                      className="w-14 px-1.5 py-0.5 rounded bg-white border border-slate-300 text-right text-[11px] text-amber-800 font-mono focus:outline-none focus:ring-1 focus:ring-amber-500 shadow-2xs"
+                      className="w-14 px-1.5 py-0.5 rounded bg-white border border-slate-300 text-right text-[11px] text-amber-800 focus:outline-none focus:ring-1 focus:ring-amber-500 shadow-2xs font-semibold"
                     />
                   </div>
 
                   {/* Line Total */}
                   <div className="text-right">
-                    <div className="text-xs font-extrabold text-slate-900 font-mono">
+                    <div className="text-xs font-extrabold text-slate-900">
                       PKR {item.total.toLocaleString()}
                     </div>
                   </div>
@@ -253,23 +253,23 @@ export function CartPanel() {
           <div className="space-y-1.5 text-xs">
             <div className="flex justify-between text-slate-600">
               <span>Subtotal</span>
-              <span className="font-mono text-slate-900 font-semibold">
+              <span className="text-slate-900 font-semibold">
                 PKR {cartSubtotal.toLocaleString()}
               </span>
             </div>
             {cartDiscount > 0 && (
               <div className="flex justify-between text-amber-800 font-medium">
                 <span>Discount</span>
-                <span className="font-mono">- PKR {cartDiscount.toLocaleString()}</span>
+                <span>- PKR {cartDiscount.toLocaleString()}</span>
               </div>
             )}
             <div className="flex justify-between text-slate-600">
               <span>FBR POS Tax (0%)</span>
-              <span className="font-mono text-slate-900 font-semibold">PKR {cartTax}</span>
+              <span className="text-slate-900 font-semibold">PKR {cartTax}</span>
             </div>
             <div className="flex justify-between items-baseline pt-2 border-t border-slate-200">
               <span className="font-extrabold text-sm text-slate-900">Grand Total</span>
-              <span className="text-lg font-black text-emerald-700 font-mono">
+              <span className="text-lg font-black text-emerald-700">
                 PKR {cartTotal.toLocaleString()}
               </span>
             </div>

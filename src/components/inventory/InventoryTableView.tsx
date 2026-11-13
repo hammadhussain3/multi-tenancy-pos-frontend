@@ -86,27 +86,27 @@ export function InventoryTableView() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 shrink-0">
         <div className="p-3.5 rounded-2xl bg-white border border-slate-200 shadow-2xs">
           <div className="text-[11px] font-semibold text-slate-500">Total Catalog Items</div>
-          <div className="text-xl font-black text-slate-900 font-mono mt-1">{products.length} SKUs</div>
+          <div className="text-xl font-black text-slate-900 mt-1">{products.length} SKUs</div>
         </div>
         <div className="p-3.5 rounded-2xl bg-white border border-slate-200 shadow-2xs">
           <div className="text-[11px] font-semibold text-slate-500">Inventory Retail Valuation</div>
-          <div className="text-xl font-black text-emerald-700 font-mono mt-1">
+          <div className="text-xl font-black text-emerald-700 mt-1">
             PKR {totalStockValueRetail.toLocaleString()}
           </div>
-          <div className="text-[10px] text-slate-500 mt-0.5 font-mono">
+          <div className="text-[10px] text-slate-500 mt-0.5">
             Cost: PKR {totalStockValueCost.toLocaleString()}
           </div>
         </div>
         <div className="p-3.5 rounded-2xl bg-white border border-slate-200 shadow-2xs">
           <div className="text-[11px] font-semibold text-slate-500">Low Stock Warnings</div>
-          <div className="text-xl font-black text-amber-800 font-mono mt-1 flex items-center gap-1.5">
+          <div className="text-xl font-black text-amber-800 mt-1 flex items-center gap-1.5">
             <AlertTriangle className="w-4 h-4 text-amber-600" />
             {lowStockCount} Products
           </div>
         </div>
         <div className="p-3.5 rounded-2xl bg-white border border-slate-200 shadow-2xs">
           <div className="text-[11px] font-semibold text-slate-500">Out of Stock</div>
-          <div className="text-xl font-black text-rose-700 font-mono mt-1">
+          <div className="text-xl font-black text-rose-700 mt-1">
             {outOfStockCount} Products
           </div>
         </div>
@@ -122,7 +122,7 @@ export function InventoryTableView() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Filter by name, barcode, or SKU..."
-              className="w-full pl-9 pr-3 py-1.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 font-mono"
+              className="w-full pl-9 pr-3 py-1.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500"
             />
           </div>
 
@@ -217,11 +217,11 @@ export function InventoryTableView() {
                           {prod.name}
                         </div>
                         {isUrdu && prod.nameUrdu && (
-                          <div className="text-[11px] text-amber-800 font-urdu mt-0.5">
+                          <div className="text-[11px] text-amber-800 mt-0.5">
                             {prod.nameUrdu}
                           </div>
                         )}
-                        <div className="text-[10px] text-slate-400 font-mono mt-0.5 flex items-center gap-2">
+                        <div className="text-[10px] text-slate-400 mt-0.5 flex items-center gap-2">
                           <span>Barcode: {prod.barcode}</span>
                           <span>•</span>
                           <span>SKU: {prod.sku}</span>
@@ -234,15 +234,15 @@ export function InventoryTableView() {
                         </span>
                       </td>
 
-                      <td className="py-2.5 px-3 text-right font-mono text-slate-500">
+                      <td className="py-2.5 px-3 text-right text-slate-500">
                         PKR {prod.purchasePrice.toLocaleString()}
                       </td>
 
-                      <td className="py-2.5 px-3 text-right font-mono font-bold text-slate-900">
+                      <td className="py-2.5 px-3 text-right font-bold text-slate-900">
                         PKR {prod.retailPrice.toLocaleString()}
                       </td>
 
-                      <td className="py-2.5 px-3 text-right font-mono text-emerald-700 font-semibold">
+                      <td className="py-2.5 px-3 text-right text-emerald-700 font-semibold">
                         {marginPercent}%
                       </td>
 
@@ -326,7 +326,7 @@ export function InventoryTableView() {
 
             <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs">
               <div className="font-bold text-slate-900">{adjustingProduct.name}</div>
-              <div className="text-slate-500 mt-1 font-mono">
+              <div className="text-slate-500 mt-1">
                 Current Stock: {adjustingProduct.currentStock} {adjustingProduct.unit}
               </div>
             </div>
@@ -341,7 +341,7 @@ export function InventoryTableView() {
                   value={adjustmentDelta || ''}
                   onChange={(e) => setAdjustmentDelta(parseInt(e.target.value) || 0)}
                   placeholder="e.g. 24 or -5"
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 font-mono font-bold text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-2xs"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 font-bold text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-2xs"
                   required
                 />
               </div>

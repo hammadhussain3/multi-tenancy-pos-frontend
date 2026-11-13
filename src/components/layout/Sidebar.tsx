@@ -65,7 +65,7 @@ export function Sidebar() {
           <div>
             <div className="font-extrabold text-sm text-slate-900 tracking-tight flex items-center gap-1.5">
               <span>POSify</span>
-              <span className="px-1.5 py-0.2 rounded text-[9px] bg-indigo-50 text-indigo-700 font-mono border border-indigo-200 font-bold">
+              <span className="px-1.5 py-0.2 rounded text-[9px] bg-indigo-50 text-indigo-700 border border-indigo-200 font-bold">
                 PRO
               </span>
             </div>
@@ -126,7 +126,7 @@ export function Sidebar() {
         <div className="p-2.5 rounded-xl bg-white border border-slate-200 shadow-2xs">
           <div className="flex items-center justify-between text-[11px] font-semibold text-slate-800">
             <span>Database Mode</span>
-            <span className="text-emerald-700 font-mono font-bold">SQLite / Local</span>
+            <span className="text-emerald-700 font-bold">SQLite / Local</span>
           </div>
           <div className="text-[10px] text-slate-500 mt-1 leading-snug">
             Immutable sync outbox enabled. All transactions cached locally.

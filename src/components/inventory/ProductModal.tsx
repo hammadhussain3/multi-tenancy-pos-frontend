@@ -91,7 +91,7 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
               />
             </div>
             <div>
-              <label className="block text-slate-700 font-semibold mb-1 font-urdu">
+              <label className="block text-slate-700 font-semibold mb-1">
                 اردو نام (Urdu Name)
               </label>
               <input
@@ -99,7 +99,7 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
                 value={nameUrdu}
                 onChange={(e) => setNameUrdu(e.target.value)}
                 placeholder="مثال: ٹپال چائے ۴۵۰ گرام"
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-urdu shadow-2xs"
+                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-2xs"
               />
             </div>
           </div>
@@ -111,7 +111,7 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
                 type="text"
                 value={barcode}
                 onChange={(e) => setBarcode(e.target.value)}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-2xs"
+                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-2xs"
                 required
               />
             </div>
@@ -122,7 +122,7 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
                 value={sku}
                 onChange={(e) => setSku(e.target.value)}
                 placeholder="BEV-001"
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-2xs"
+                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-2xs"
               />
             </div>
           </div>
@@ -172,7 +172,7 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
                 type="number"
                 value={purchasePrice || ''}
                 onChange={(e) => setPurchasePrice(parseFloat(e.target.value) || 0)}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 font-mono focus:outline-none shadow-2xs"
+                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none shadow-2xs"
                 required
               />
             </div>
@@ -184,7 +184,7 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
                 type="number"
                 value={retailPrice || ''}
                 onChange={(e) => setRetailPrice(parseFloat(e.target.value) || 0)}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 font-mono focus:outline-none font-bold text-emerald-700 shadow-2xs"
+                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none font-bold text-emerald-700 shadow-2xs"
                 required
               />
             </div>
@@ -197,7 +197,7 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
                 type="number"
                 value={currentStock || ''}
                 onChange={(e) => setCurrentStock(parseInt(e.target.value) || 0)}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 font-mono focus:outline-none shadow-2xs"
+                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none shadow-2xs"
                 required
               />
             </div>
@@ -209,7 +209,7 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
                 type="number"
                 value={minStockAlert || ''}
                 onChange={(e) => setMinStockAlert(parseInt(e.target.value) || 0)}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 font-mono focus:outline-none shadow-2xs"
+                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none shadow-2xs"
                 required
               />
             </div>

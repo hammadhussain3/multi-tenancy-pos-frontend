@@ -17,9 +17,7 @@ function PosDashboard() {
   return (
     <div
       dir={isUrdu ? 'rtl' : 'ltr'}
-      className={`h-screen w-screen flex flex-col bg-slate-100 text-slate-900 overflow-hidden font-sans ${
-        isUrdu ? 'font-urdu' : ''
-      }`}
+      className="h-screen w-screen flex flex-col bg-slate-100 text-slate-900 overflow-hidden"
     >
       {/* Global Multi-Tenant Header */}
       <TopHeader />

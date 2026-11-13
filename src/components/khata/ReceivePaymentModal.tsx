@@ -49,7 +49,7 @@ export function ReceivePaymentModal({
         <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 flex justify-between items-center text-xs">
           <div>
             <div className="text-slate-500">Total Outstanding Udhaar:</div>
-            <div className="text-base font-extrabold text-amber-800 font-mono mt-0.5">
+            <div className="text-base font-extrabold text-amber-800 mt-0.5">
               PKR {customer.currentBalance.toLocaleString()}
             </div>
           </div>
@@ -71,7 +71,7 @@ export function ReceivePaymentModal({
               type="number"
               value={amount || ''}
               onChange={(e) => setAmount(parseFloat(e.target.value) || 0)}
-              className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 font-mono font-bold text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-2xs"
+              className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 font-bold text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-2xs"
               required
             />
           </div>

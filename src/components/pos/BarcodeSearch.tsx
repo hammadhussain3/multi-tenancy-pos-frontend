@@ -71,7 +71,7 @@ export function BarcodeSearch() {
                   ? 'بارکوڈ اسکین کریں یا پروڈکٹ کا نام تلاش کریں... (F2)'
                   : 'Scan Barcode or Search Products by Name/SKU... (Press F2 to focus)'
               }
-              className="w-full pl-11 pr-10 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all font-mono shadow-xs"
+              className="w-full pl-11 pr-10 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all shadow-xs"
               autoFocus
             />
             {searchQuery && (

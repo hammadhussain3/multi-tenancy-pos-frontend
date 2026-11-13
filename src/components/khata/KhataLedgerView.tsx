@@ -48,7 +48,7 @@ export function KhataLedgerView() {
         <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-2xs flex items-center justify-between">
           <div>
             <div className="text-xs font-semibold text-slate-500">Total Udhaar / Credit Given</div>
-            <div className="text-xl font-extrabold text-amber-800 font-mono mt-1">
+            <div className="text-xl font-extrabold text-amber-800 mt-1">
               PKR {totalOutstandingUdhaar.toLocaleString()}
             </div>
           </div>
@@ -60,7 +60,7 @@ export function KhataLedgerView() {
         <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-2xs flex items-center justify-between">
           <div>
             <div className="text-xs font-semibold text-slate-500">Registered Khata Customers</div>
-            <div className="text-xl font-extrabold text-slate-900 font-mono mt-1">
+            <div className="text-xl font-extrabold text-slate-900 mt-1">
               {customers.length}
             </div>
           </div>
@@ -72,7 +72,7 @@ export function KhataLedgerView() {
         <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-2xs flex items-center justify-between">
           <div>
             <div className="text-xs font-semibold text-slate-500">Customers with Balance</div>
-            <div className="text-xl font-extrabold text-emerald-700 font-mono mt-1">
+            <div className="text-xl font-extrabold text-emerald-700 mt-1">
               {customers.filter((c) => c.currentBalance > 0).length}
             </div>
           </div>
@@ -117,7 +117,7 @@ export function KhataLedgerView() {
                   <div className="flex justify-between items-start">
                     <div className="font-bold text-xs text-slate-900">{customer.name}</div>
                     <div
-                      className={`text-xs font-mono font-bold ${
+                      className={`text-xs font-bold ${
                         customer.currentBalance > 0 ? 'text-amber-800' : 'text-slate-500'
                       }`}
                     >
@@ -150,11 +150,11 @@ export function KhataLedgerView() {
               <div>
                 <div className="flex items-center gap-2">
                   <span className="text-base font-extrabold text-slate-900">{activeCustomer.name}</span>
-                  <span className="px-2 py-0.5 bg-white border border-slate-200 text-slate-600 text-[10px] font-mono rounded-full">
+                  <span className="px-2 py-0.5 bg-white border border-slate-200 text-slate-600 text-[10px] rounded-full">
                     {activeCustomer.city}
                   </span>
                 </div>
-                <div className="text-xs text-slate-500 mt-1 font-mono">
+                <div className="text-xs text-slate-500 mt-1">
                   Phone: {activeCustomer.phone} • Credit Limit: PKR{' '}
                   {activeCustomer.creditLimit.toLocaleString()}
                 </div>
@@ -208,10 +208,10 @@ export function KhataLedgerView() {
                     ) : (
                       activeLedger.map((entry) => (
                         <tr key={entry.id} className="hover:bg-slate-50 transition-colors">
-                          <td className="py-2.5 px-3 text-slate-500 font-mono text-[11px]">
+                          <td className="py-2.5 px-3 text-slate-500 text-[11px]">
                             {entry.date}
                           </td>
-                          <td className="py-2.5 px-3 font-mono text-[11px] font-bold text-slate-900">
+                          <td className="py-2.5 px-3 text-[11px] font-bold text-slate-900">
                             <span className="flex items-center gap-1">
                               {entry.debit > 0 ? (
                                 <ArrowUpRight className="w-3 h-3 text-rose-600" />
@@ -222,13 +222,13 @@ export function KhataLedgerView() {
                             </span>
                           </td>
                           <td className="py-2.5 px-3 text-slate-700">{entry.narration}</td>
-                          <td className="py-2.5 px-3 text-right font-mono font-bold text-rose-700">
+                          <td className="py-2.5 px-3 text-right font-bold text-rose-700">
                             {entry.debit > 0 ? `PKR ${entry.debit.toLocaleString()}` : '-'}
                           </td>
-                          <td className="py-2.5 px-3 text-right font-mono font-bold text-emerald-700">
+                          <td className="py-2.5 px-3 text-right font-bold text-emerald-700">
                             {entry.credit > 0 ? `PKR ${entry.credit.toLocaleString()}` : '-'}
                           </td>
-                          <td className="py-2.5 px-3 text-right font-mono font-black text-amber-800">
+                          <td className="py-2.5 px-3 text-right font-black text-amber-800">
                             PKR {entry.runningBalance.toLocaleString()}
                           </td>
                         </tr>

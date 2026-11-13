@@ -90,7 +90,7 @@ export function SplitPaymentModal({ onClose }: SplitPaymentModalProps) {
         <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between">
           <div>
             <div className="text-xs font-semibold text-slate-500">Order Grand Total</div>
-            <div className="text-2xl font-black text-emerald-700 font-mono mt-0.5">
+            <div className="text-2xl font-black text-emerald-700 mt-0.5">
               PKR {cartTotal.toLocaleString()}
             </div>
           </div>
@@ -98,7 +98,7 @@ export function SplitPaymentModal({ onClose }: SplitPaymentModalProps) {
           <div className="text-right">
             <div className="text-xs font-semibold text-slate-500">Allocated / Remaining</div>
             <div
-              className={`text-sm font-bold font-mono ${
+              className={`text-sm font-bold ${
                 remaining === 0 ? 'text-emerald-700' : 'text-amber-800'
               }`}
             >
@@ -125,12 +125,12 @@ export function SplitPaymentModal({ onClose }: SplitPaymentModalProps) {
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="text-xs text-slate-500 font-mono">PKR</span>
+              <span className="text-xs text-slate-500">PKR</span>
               <input
                 type="number"
                 value={cashAmount || ''}
                 onChange={(e) => setCashAmount(parseFloat(e.target.value) || 0)}
-                className="w-28 py-1.5 px-2 bg-white border border-slate-300 rounded-lg text-right font-mono text-sm font-bold text-slate-900 focus:outline-none focus:ring-1 focus:ring-emerald-500 shadow-2xs"
+                className="w-28 py-1.5 px-2 bg-white border border-slate-300 rounded-lg text-right text-sm font-bold text-slate-900 focus:outline-none focus:ring-1 focus:ring-emerald-500 shadow-2xs"
               />
             </div>
           </div>
@@ -144,13 +144,13 @@ export function SplitPaymentModal({ onClose }: SplitPaymentModalProps) {
                   type="number"
                   value={cashTendered || ''}
                   onChange={(e) => setCashTendered(parseFloat(e.target.value) || 0)}
-                  className="w-20 px-1.5 py-0.5 bg-white border border-slate-300 rounded text-right font-mono text-emerald-800 font-bold shadow-2xs"
+                  className="w-20 px-1.5 py-0.5 bg-white border border-slate-300 rounded text-right text-emerald-800 font-bold shadow-2xs"
                 />
               </div>
 
               <div className="text-right">
                 <span className="text-slate-500 mr-1.5">Change to return:</span>
-                <span className="font-mono font-bold text-emerald-700">
+                <span className="font-bold text-emerald-700">
                   PKR {changeGiven.toLocaleString()}
                 </span>
               </div>
@@ -170,12 +170,12 @@ export function SplitPaymentModal({ onClose }: SplitPaymentModalProps) {
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="text-xs text-slate-500 font-mono">PKR</span>
+              <span className="text-xs text-slate-500">PKR</span>
               <input
                 type="number"
                 value={cardAmount || ''}
                 onChange={(e) => setCardAmount(parseFloat(e.target.value) || 0)}
-                className="w-28 py-1.5 px-2 bg-white border border-slate-300 rounded-lg text-right font-mono text-sm font-bold text-slate-900 focus:outline-none focus:ring-1 focus:ring-indigo-500 shadow-2xs"
+                className="w-28 py-1.5 px-2 bg-white border border-slate-300 rounded-lg text-right text-sm font-bold text-slate-900 focus:outline-none focus:ring-1 focus:ring-indigo-500 shadow-2xs"
               />
             </div>
           </div>
@@ -196,12 +196,12 @@ export function SplitPaymentModal({ onClose }: SplitPaymentModalProps) {
               </div>
 
               <div className="flex items-center gap-2">
-                <span className="text-xs text-slate-500 font-mono">PKR</span>
+                <span className="text-xs text-slate-500">PKR</span>
                 <input
                   type="number"
                   value={khataAmount || ''}
                   onChange={(e) => setKhataAmount(parseFloat(e.target.value) || 0)}
-                  className="w-28 py-1.5 px-2 bg-white border border-slate-300 rounded-lg text-right font-mono text-sm font-bold text-slate-900 focus:outline-none focus:ring-1 focus:ring-amber-500 shadow-2xs"
+                  className="w-28 py-1.5 px-2 bg-white border border-slate-300 rounded-lg text-right text-sm font-bold text-slate-900 focus:outline-none focus:ring-1 focus:ring-amber-500 shadow-2xs"
                 />
               </div>
             </div>

@@ -72,7 +72,7 @@ export function TopHeader() {
                     <div>
                       <div className="text-xs font-semibold text-slate-900">{t.name}</div>
                       <div className="text-[11px] text-slate-600">{t.branch}</div>
-                      <div className="text-[10px] text-indigo-600 font-mono mt-0.5">
+                      <div className="text-[10px] text-indigo-600 mt-0.5">
                         NTN: {t.ntn} | POS: {t.fbrPosId}
                       </div>
                     </div>
@@ -85,7 +85,7 @@ export function TopHeader() {
           <div className="h-5 w-px bg-slate-200" />
 
           {/* POS Terminal Tag */}
-          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-mono font-semibold">
+          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
             REG-01 [POS TERMINAL]
           </div>
@@ -114,7 +114,7 @@ export function TopHeader() {
               <>
                 <Cloud className="w-3.5 h-3.5 text-emerald-600" />
                 <span>Cloud Connected</span>
-                <span className="text-[10px] text-emerald-700 font-mono">Real-time</span>
+                <span className="text-[10px] text-emerald-700 font-medium">Real-time</span>
               </>
             )}
 
@@ -142,7 +142,7 @@ export function TopHeader() {
         {/* Right: Controls & Cashier info */}
         <div className="flex items-center gap-2.5">
           {/* FBR Compliance Status */}
-          <div className="hidden lg:flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 text-xs border border-slate-200 font-mono">
+          <div className="hidden lg:flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 text-xs border border-slate-200 font-medium">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
             <span>FBR POS Ready</span>
           </div>
@@ -200,13 +200,13 @@ export function TopHeader() {
             <div className="mt-4 space-y-2.5 text-xs">
               <div className="flex justify-between items-center p-2 rounded-xl bg-slate-50 border border-slate-200">
                 <span className="text-slate-700">Focus Barcode Scanner / Search</span>
-                <kbd className="px-2 py-0.5 rounded bg-white border border-slate-300 text-indigo-700 font-mono font-bold shadow-xs">
+                <kbd className="px-2 py-0.5 rounded bg-white border border-slate-300 text-indigo-700 font-bold shadow-xs">
                   F2
                 </kbd>
               </div>
               <div className="flex justify-between items-center p-2 rounded-xl bg-slate-50 border border-slate-200">
                 <span className="text-slate-700">Open POS Terminal</span>
-                <kbd className="px-2 py-0.5 rounded bg-white border border-slate-300 text-indigo-700 font-mono font-bold shadow-xs">
+                <kbd className="px-2 py-0.5 rounded bg-white border border-slate-300 text-indigo-700 font-bold shadow-xs">
                   F12
                 </kbd>
               </div>

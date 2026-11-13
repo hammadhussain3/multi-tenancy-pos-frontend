@@ -50,7 +50,7 @@ export function ThermalReceiptModal({
         {/* 80mm Thermal Receipt Canvas (Clean Paper Appearance) */}
         <div
           id="printable-thermal-receipt"
-          className="bg-slate-50 border border-slate-200 text-black p-5 rounded-xl shadow-xs font-mono text-[11px] leading-tight select-text"
+          className="bg-slate-50 border border-slate-200 text-black p-5 rounded-xl shadow-xs text-[11px] leading-tight select-text"
         >
           {/* Business Header */}
           <div className="text-center pb-2 border-b border-dashed border-gray-400 space-y-0.5">
@@ -172,7 +172,7 @@ export function ThermalReceiptModal({
 
           {/* Footer & Urdu Message */}
           <div className="text-center pt-3 space-y-1">
-            <div className="text-[10px] font-urdu font-bold text-slate-800">
+            <div className="text-[10px] font-bold text-slate-800">
               شکریہ! خریدا ہوا سامان ۳ دن میں اصل رسید کے ساتھ تبدیل ہو سکتا ہے۔
             </div>
             <div className="text-[8px] text-gray-500">

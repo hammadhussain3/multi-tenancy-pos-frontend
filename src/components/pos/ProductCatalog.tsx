@@ -73,11 +73,11 @@ export function ProductCatalog() {
                     {product.name}
                   </div>
                   {isUrdu && product.nameUrdu && (
-                    <div className="text-[11px] text-amber-800 font-medium mt-0.5 font-urdu">
+                    <div className="text-[11px] text-amber-800 font-medium mt-0.5">
                       {product.nameUrdu}
                     </div>
                   )}
-                  <div className="text-[10px] text-slate-400 font-mono mt-1">
+                  <div className="text-[10px] text-slate-400 mt-1">
                     {product.barcode}
                   </div>
                 </div>

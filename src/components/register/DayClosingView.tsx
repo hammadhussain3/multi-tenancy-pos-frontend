@@ -62,10 +62,10 @@ export function DayClosingView() {
         {/* Total Sales */}
         <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-1">
           <div className="text-xs font-semibold text-slate-500">Total Gross Sales</div>
-          <div className="text-2xl font-black text-slate-900 font-mono">
+          <div className="text-2xl font-black text-slate-900">
             PKR {totalSalesRevenue.toLocaleString()}
           </div>
-          <div className="text-[10px] text-slate-400 font-mono">
+          <div className="text-[10px] text-slate-400">
             {invoices.length} invoices generated
           </div>
         </div>
@@ -76,7 +76,7 @@ export function DayClosingView() {
             <Banknote className="w-4 h-4" />
             <span>Cash Sales</span>
           </div>
-          <div className="text-2xl font-black text-emerald-700 font-mono">
+          <div className="text-2xl font-black text-emerald-700">
             PKR {totalCashSales.toLocaleString()}
           </div>
           <div className="text-[10px] text-slate-400">Collected in register drawer</div>
@@ -88,7 +88,7 @@ export function DayClosingView() {
             <CreditCard className="w-4 h-4" />
             <span>Card / Bank POS</span>
           </div>
-          <div className="text-2xl font-black text-indigo-700 font-mono">
+          <div className="text-2xl font-black text-indigo-700">
             PKR {totalCardSales.toLocaleString()}
           </div>
           <div className="text-[10px] text-slate-400">Settled to merchant bank account</div>
@@ -100,7 +100,7 @@ export function DayClosingView() {
             <BookOpen className="w-4 h-4" />
             <span>Khata (Udhaar) Sales</span>
           </div>
-          <div className="text-2xl font-black text-amber-800 font-mono">
+          <div className="text-2xl font-black text-amber-800">
             PKR {totalKhataCredit.toLocaleString()}
           </div>
           <div className="text-[10px] text-slate-400">Recorded in customer receivables</div>
@@ -122,21 +122,21 @@ export function DayClosingView() {
         <div className="space-y-3 text-xs">
           <div className="flex justify-between items-center py-2 border-b border-slate-100 text-slate-700">
             <span>Opening Cash Fund (Float / Change Money):</span>
-            <span className="font-mono font-bold text-slate-900">
+            <span className="font-bold text-slate-900">
               PKR {openingFloat.toLocaleString()}
             </span>
           </div>
 
           <div className="flex justify-between items-center py-2 border-b border-slate-100 text-slate-700">
             <span>Cash Sales Collected in Shift:</span>
-            <span className="font-mono font-bold text-emerald-700">
+            <span className="font-bold text-emerald-700">
               + PKR {totalCashSales.toLocaleString()}
             </span>
           </div>
 
           <div className="flex justify-between items-center py-2.5 border-b border-slate-100 text-sm font-bold text-slate-900 bg-slate-50 px-3 rounded-xl">
             <span>Expected Total Cash in Drawer:</span>
-            <span className="font-mono text-emerald-700 font-extrabold">
+            <span className="text-emerald-700 font-extrabold">
               PKR {expectedDrawerCash.toLocaleString()}
             </span>
           </div>
@@ -151,7 +151,7 @@ export function DayClosingView() {
                 value={physicalCashCounted || ''}
                 onChange={(e) => setPhysicalCashCounted(parseFloat(e.target.value) || 0)}
                 placeholder="Enter total physical currency count..."
-                className="w-72 px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 font-mono text-base font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-2xs"
+                className="w-72 px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-base font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-2xs"
               />
               <button
                 type="button"
@@ -187,7 +187,7 @@ export function DayClosingView() {
                     : `Cash Shortage: PKR ${Math.abs(cashVariance).toLocaleString()} missing.`}
                 </span>
               </div>
-              <div className="font-mono font-bold text-sm">
+              <div className="font-bold text-sm">
                 Variance: {cashVariance > 0 ? `+${cashVariance}` : cashVariance}
               </div>
             </div>
