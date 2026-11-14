@@ -51,13 +51,18 @@ export function TopHeader() {
             <Menu className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
           </button>
 
-          {/* Brand Mark (Desktop) */}
-          <div className="hidden lg:flex items-center gap-2 pr-2 border-r border-slate-200 dark:border-slate-800">
+          {/* Single Global Brand Logo */}
+          <div className="hidden lg:flex items-center gap-2.5 pr-3 border-r border-slate-200/80 dark:border-slate-800">
             <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-600 text-white flex items-center justify-center font-black text-sm shadow-xs shadow-indigo-600/30">
               <Store className="w-4 h-4" />
             </div>
-            <div className="font-black text-slate-900 dark:text-slate-100 text-sm tracking-tight">
-              POS<span className="text-indigo-600 dark:text-indigo-400">IFY</span>
+            <div className="flex items-center gap-1.5">
+              <span className="font-black text-slate-900 dark:text-slate-100 text-sm tracking-tight">
+                POS<span className="text-indigo-600 dark:text-indigo-400">ify</span>
+              </span>
+              <span className="px-1.5 py-0.2 rounded text-[9px] bg-indigo-50 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800 font-bold">
+                PRO
+              </span>
             </div>
           </div>
 

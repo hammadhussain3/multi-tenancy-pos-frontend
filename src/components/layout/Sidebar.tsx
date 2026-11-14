@@ -77,27 +77,23 @@ export function Sidebar() {
   const navContent = (
     <>
       <div className="flex-1 min-h-0 overflow-y-auto">
-        {/* Brand Banner */}
-        <div className="h-14 px-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center shadow-xs">
-              <Store className="w-4 h-4 text-white" />
+        {/* Mobile Drawer Header with Close Button (Hidden on Desktop) */}
+        <div className="lg:hidden h-14 px-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-xl bg-indigo-600 flex items-center justify-center shadow-xs">
+              <Store className="w-3.5 h-3.5 text-white" />
             </div>
-            <div>
-              <div className="font-extrabold text-sm text-slate-900 dark:text-slate-100 tracking-tight flex items-center gap-1.5">
-                <span>POSify</span>
-                <span className="px-1.5 py-0.2 rounded text-[9px] bg-indigo-50 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800 font-bold">
-                  PRO
-                </span>
-              </div>
-              <div className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Hybrid Retail POS</div>
+            <div className="font-black text-sm text-slate-900 dark:text-slate-100 flex items-center gap-1.5">
+              <span>POS<span className="text-indigo-600 dark:text-indigo-400">ify</span></span>
+              <span className="px-1.5 py-0.2 rounded text-[9px] bg-indigo-50 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800 font-bold">
+                PRO
+              </span>
             </div>
           </div>
 
-          {/* Close button on mobile */}
           <button
             onClick={() => setIsMobileMenuOpen(false)}
-            className="lg:hidden p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
+            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
             title="Close menu"
           >
             <X className="w-5 h-5" />
