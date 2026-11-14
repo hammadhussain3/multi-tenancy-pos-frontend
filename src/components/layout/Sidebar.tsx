@@ -30,44 +30,44 @@ export function Sidebar() {
     icon: typeof ShoppingCart;
     badge?: number;
   }[] = [
-    {
-      id: 'pos',
-      label: 'POS Checkout',
-      labelUrdu: 'سیلز کاؤنٹر',
-      icon: ShoppingCart,
-      badge: cart.length > 0 ? cart.length : undefined,
-    },
-    {
-      id: 'khata',
-      label: 'Khata Ledger (Udhaar)',
-      labelUrdu: 'کھاتہ / ادھار رجسٹر',
-      icon: BookOpen,
-    },
-    {
-      id: 'inventory',
-      label: 'Stock & Products',
-      labelUrdu: 'اسٹاک اور مصنوعات',
-      icon: Package,
-    },
-    {
-      id: 'sales',
-      label: 'Sales History',
-      labelUrdu: 'سابقہ بل اور رسیدیں',
-      icon: Receipt,
-    },
-    {
-      id: 'register',
-      label: 'Day Closing & Cash',
-      labelUrdu: 'دن کا حساب اور کیش',
-      icon: Calculator,
-    },
-    {
-      id: 'reports',
-      label: 'Reports & Analytics',
-      labelUrdu: 'رپورٹس اور تجزیہ',
-      icon: BarChart3,
-    },
-  ];
+      {
+        id: 'pos',
+        label: 'POS Checkout',
+        labelUrdu: 'سیلز کاؤنٹر',
+        icon: ShoppingCart,
+        badge: cart.length > 0 ? cart.length : undefined,
+      },
+      {
+        id: 'khata',
+        label: 'Khata Ledger (Udhaar)',
+        labelUrdu: 'کھاتہ / ادھار رجسٹر',
+        icon: BookOpen,
+      },
+      {
+        id: 'inventory',
+        label: 'Stock & Products',
+        labelUrdu: 'اسٹاک اور مصنوعات',
+        icon: Package,
+      },
+      {
+        id: 'sales',
+        label: 'Sales History',
+        labelUrdu: 'سابقہ بل اور رسیدیں',
+        icon: Receipt,
+      },
+      {
+        id: 'register',
+        label: 'Day Closing & Cash',
+        labelUrdu: 'دن کا حساب اور کیش',
+        icon: Calculator,
+      },
+      {
+        id: 'reports',
+        label: 'Reports & Analytics',
+        labelUrdu: 'رپورٹس اور تجزیہ',
+        icon: BarChart3,
+      },
+    ];
 
   const handleNavClick = (tabId: ActiveTab) => {
     setActiveTab(tabId);
@@ -115,17 +115,15 @@ export function Sidebar() {
               <button
                 key={item.id}
                 onClick={() => handleNavClick(item.id)}
-                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all group cursor-pointer ${
-                  isActive
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all group cursor-pointer ${isActive
                     ? 'bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 shadow-xs border border-indigo-100 dark:border-indigo-800/60'
                     : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-800/60'
-                }`}
+                  }`}
               >
                 <div className="flex items-center gap-3">
                   <Icon
-                    className={`w-4 h-4 transition-transform group-hover:scale-110 ${
-                      isActive ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-300'
-                    }`}
+                    className={`w-4 h-4 transition-transform group-hover:scale-110 ${isActive ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-300'
+                      }`}
                   />
                   <span>{isUrdu ? item.labelUrdu : item.label}</span>
                 </div>
@@ -133,11 +131,10 @@ export function Sidebar() {
                 <div className="flex items-center gap-1">
                   {item.badge !== undefined && (
                     <span
-                      className={`px-1.5 py-0.5 rounded-full text-[10px] font-bold ${
-                        isActive
+                      className={`px-1.5 py-0.5 rounded-full text-[10px] font-bold ${isActive
                           ? 'bg-indigo-600 text-white'
                           : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
-                      }`}
+                        }`}
                     >
                       {item.badge}
                     </span>
@@ -151,7 +148,7 @@ export function Sidebar() {
       </div>
 
       {/* Footer / System Status */}
-      <div className="p-3 border-t border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/40 shrink-0">
+      {/* <div className="p-3 border-t border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/40 shrink-0">
         <div className="p-2.5 rounded-xl bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 shadow-2xs">
           <div className="flex items-center justify-between text-[11px] font-semibold text-slate-800 dark:text-slate-200">
             <span>Database Mode</span>
@@ -161,7 +158,7 @@ export function Sidebar() {
             Immutable sync outbox enabled. All transactions cached locally.
           </div>
         </div>
-      </div>
+      </div> */}
     </>
   );
 
@@ -183,9 +180,8 @@ export function Sidebar() {
 
           {/* Drawer Container */}
           <aside
-            className={`fixed inset-y-0 ${
-              isUrdu ? 'right-0' : 'left-0'
-            } z-50 w-72 bg-white dark:bg-slate-900 shadow-2xl flex flex-col justify-between select-none border-r border-slate-200 dark:border-slate-800 transition-colors duration-200`}
+            className={`fixed inset-y-0 ${isUrdu ? 'right-0' : 'left-0'
+              } z-50 w-72 bg-white dark:bg-slate-900 shadow-2xl flex flex-col justify-between select-none border-r border-slate-200 dark:border-slate-800 transition-colors duration-200`}
           >
             {navContent}
           </aside>
