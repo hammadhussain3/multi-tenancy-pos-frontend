@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 import type { ReactNode } from 'react';
 import type {
   ActiveTab,
+  AuthUser,
   CartItem,
   Customer,
   CustomerLedgerEntry,
@@ -97,6 +98,82 @@ export function PosProvider({ children }: { children: ReactNode }) {
   // Invoices & Thermal Receipt
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [activeReceipt, setActiveReceipt] = useState<Invoice | null>(null);
+
+  // Authentication State (Laravel Sanctum)
+  const [authUser, setAuthUser] = useState<AuthUser | null>(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('posify_auth_user');
+      const token = localStorage.getItem('posify_auth_token');
+      if (stored && token) {
+        try {
+          return JSON.parse(stored);
+        } catch {
+          return null;
+        }
+      }
+    }
+    return null;
+  });
+
+  const isAuthenticated = Boolean(authUser && posApi.getAuthToken());
+
+  // Verify auth session with backend on mount
+  useEffect(() => {
+    const token = posApi.getAuthToken();
+    if (token) {
+      posApi.auth
+        .me()
+        .then((res) => {
+          if (res?.user) {
+            setAuthUser(res.user);
+            localStorage.setItem('posify_auth_user', JSON.stringify(res.user));
+            if (res.tenant) {
+              setCurrentTenant(res.tenant);
+            }
+          }
+        })
+        .catch(() => {
+          setAuthUser(null);
+          localStorage.removeItem('posify_auth_user');
+          posApi.setAuthToken(null);
+        });
+    }
+  }, []);
+
+  const login = useCallback(async (email: string, pass: string) => {
+    const res = await posApi.auth.login(email, pass);
+    if (res.user) {
+      setAuthUser(res.user);
+      localStorage.setItem('posify_auth_user', JSON.stringify(res.user));
+    }
+    if (res.tenant) {
+      setCurrentTenant(res.tenant);
+    }
+  }, []);
+
+  const pinLogin = useCallback(async (pinCode: string, tenantId?: number | string) => {
+    const res = await posApi.auth.pinLogin(pinCode, tenantId);
+    if (res.user) {
+      setAuthUser(res.user);
+      localStorage.setItem('posify_auth_user', JSON.stringify(res.user));
+    }
+    if (res.tenant) {
+      setCurrentTenant(res.tenant);
+    }
+  }, []);
+
+  const logout = useCallback(async () => {
+    try {
+      await posApi.auth.logout();
+    } catch {
+      // offline or already invalidated
+    } finally {
+      setAuthUser(null);
+      localStorage.removeItem('posify_auth_user');
+      posApi.setAuthToken(null);
+      setCart([]);
+    }
+  }, []);
 
   // Live Backend Hydration with Multi-Tenant Support & Offline Fallback
   useEffect(() => {
@@ -629,6 +706,11 @@ export function PosProvider({ children }: { children: ReactNode }) {
   return (
     <PosContext.Provider
       value={{
+        authUser,
+        isAuthenticated,
+        login,
+        pinLogin,
+        logout,
         activeTab,
         setActiveTab,
         posTerminalMode,

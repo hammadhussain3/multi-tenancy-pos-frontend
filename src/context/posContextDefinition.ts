@@ -1,6 +1,7 @@
 import { createContext } from 'react';
 import type {
   ActiveTab,
+  AuthUser,
   CartItem,
   Customer,
   CustomerLedgerEntry,
@@ -14,6 +15,12 @@ import type {
 } from '../types/pos';
 
 export interface PosContextType {
+  authUser: AuthUser | null;
+  isAuthenticated: boolean;
+  login: (email: string, password: string) => Promise<void>;
+  pinLogin: (pinCode: string, tenantId?: number | string) => Promise<void>;
+  logout: () => Promise<void>;
+
   activeTab: ActiveTab;
   setActiveTab: (tab: ActiveTab) => void;
   posTerminalMode: PosTerminalMode;

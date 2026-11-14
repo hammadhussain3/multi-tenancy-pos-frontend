@@ -126,3 +126,11 @@ export interface TenantInfo {
 export type ActiveTab = 'pos' | 'inventory' | 'khata' | 'sales' | 'register' | 'reports';
 
 export type PosTerminalMode = 'mart' | 'catalog';
+
+export interface AuthUser {
+  id: number;
+  name: string;
+  email: string;
+  role: 'admin' | 'manager' | 'cashier';
+  tenant_id: number;
+}

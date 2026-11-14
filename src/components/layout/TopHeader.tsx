@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
 import {
@@ -15,11 +16,15 @@ import {
   Sun,
   Moon,
   Store,
+  LogOut,
 } from 'lucide-react';
 import { usePos } from '../../context/usePos';
 
 export function TopHeader() {
+  const navigate = useNavigate();
   const {
+    authUser,
+    logout,
     tenants,
     currentTenant,
     setCurrentTenant,
@@ -74,6 +79,29 @@ export function TopHeader() {
           : 'swal2-light-popup rounded-2xl border border-slate-200 shadow-2xl',
       },
     });
+  };
+
+  const handleLogout = async () => {
+    const isDark = theme === 'dark';
+    const result = await Swal.fire({
+      title: isUrdu ? 'کیا آپ شفٹ ختم کرنا چاہتے ہیں؟' : 'End Register Shift?',
+      text: isUrdu
+        ? 'آپ کا فعال سیشن ختم ہو جائے گا اور ٹرمینل لاک ہو جائے گا۔'
+        : 'Your active cashier session will end and the POS terminal will be locked.',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#e11d48',
+      cancelButtonColor: '#64748b',
+      confirmButtonText: isUrdu ? 'ہاں، لاگ آؤٹ کریں' : 'Yes, End Shift & Logout',
+      cancelButtonText: isUrdu ? 'کینسل' : 'Cancel',
+      background: isDark ? '#0f172a' : '#ffffff',
+      color: isDark ? '#f8fafc' : '#0f172a',
+    });
+
+    if (result.isConfirmed) {
+      await logout();
+      navigate('/login', { replace: true });
+    }
   };
 
   return (
@@ -290,16 +318,30 @@ export function TopHeader() {
 
           <div className="h-5 w-px bg-slate-200 dark:bg-slate-800 hidden sm:block" />
 
-          {/* Cashier Badge Card */}
+          {/* Authenticated Cashier / Manager Badge */}
           <div className="flex items-center gap-2 px-2 py-1 rounded-xl bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200/60 dark:border-slate-700/60">
             <div className="w-6 h-6 rounded-lg bg-gradient-to-tr from-indigo-600 to-violet-600 text-white flex items-center justify-center font-bold text-xs shadow-2xs shrink-0">
               <User className="w-3.5 h-3.5" />
             </div>
             <div className="hidden xl:block text-left text-xs">
-              <div className="font-bold text-slate-900 dark:text-slate-100 leading-none">Hammad Hussain</div>
-              <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 leading-none">Senior Cashier</div>
+              <div className="font-bold text-slate-900 dark:text-slate-100 leading-none">
+                {authUser?.name || 'Hammad Hussain'}
+              </div>
+              <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 leading-none capitalize font-semibold">
+                {authUser?.role ? `${authUser.role} (Online)` : 'Senior Cashier'}
+              </div>
             </div>
           </div>
+
+          {/* Dedicated Logout / End Shift Button */}
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/50 text-rose-700 dark:text-rose-400 border border-rose-200/80 dark:border-rose-800/60 text-xs font-bold transition-all cursor-pointer shadow-2xs active:scale-95"
+            title={isUrdu ? 'شفٹ ختم اور لاگ آؤٹ' : 'Logout & End Shift'}
+          >
+            <LogOut className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />
+            <span className="hidden sm:inline">{isUrdu ? 'لاگ آؤٹ' : 'Logout'}</span>
+          </button>
         </div>
       </header>
 
