@@ -19,7 +19,7 @@ export function SalesHistoryView() {
   const totalSalesAmount = invoices.reduce((sum, inv) => sum + inv.grandTotal, 0);
 
   return (
-    <div className="flex-1 flex flex-col h-full overflow-hidden bg-slate-50 dark:bg-[#0b0f19] p-2.5 sm:p-4 gap-2.5 sm:gap-4 transition-colors">
+    <div className="flex-1 min-h-0 flex flex-col h-full overflow-hidden bg-slate-50 dark:bg-[#0b0f19] p-2.5 sm:p-4 gap-2.5 sm:gap-4 transition-colors">
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 shrink-0">
         <div>

@@ -76,20 +76,20 @@ function PosDashboard() {
   return (
     <div
       dir={isUrdu ? 'rtl' : 'ltr'}
-      className="h-full w-full max-h-dvh flex flex-col bg-slate-100 dark:bg-[#0b0f19] text-slate-900 dark:text-slate-100 overflow-hidden select-none transition-colors duration-200"
+      className="h-full w-full max-h-full flex flex-col bg-slate-100 dark:bg-[#0b0f19] text-slate-900 dark:text-slate-100 overflow-hidden select-none transition-colors duration-200"
     >
       {/* Global Multi-Tenant Header */}
       <TopHeader />
 
       {/* Main Workspace Body */}
-      <div className="flex-1 flex overflow-hidden relative">
+      <div className="flex-1 min-h-0 flex overflow-hidden relative">
         {/* Navigation Sidebar (Desktop + Mobile Drawer) */}
         <Sidebar />
 
         {/* Dynamic View Container */}
-        <main className="flex-1 flex flex-col overflow-hidden relative bg-slate-100 dark:bg-[#0b0f19] pb-16 lg:pb-0 transition-colors duration-200">
+        <main className="flex-1 min-h-0 flex flex-col overflow-hidden relative bg-slate-100 dark:bg-[#0b0f19] pb-16 lg:pb-0 transition-colors duration-200">
           {activeTab === 'pos' && (
-            <div className="flex-1 flex flex-col lg:flex-row h-full overflow-hidden relative">
+            <div className="flex-1 min-h-0 flex flex-col lg:flex-row h-full max-h-full overflow-hidden relative">
               {/* On screens < lg: Top Segmented Switcher (Catalog vs Order/Cart) */}
               <div className="lg:hidden shrink-0 px-2.5 pt-2 pb-1 bg-slate-100 dark:bg-[#0b0f19] flex items-center gap-2">
                 <div className="flex-1 flex items-center p-1 bg-slate-200/80 dark:bg-slate-800 rounded-xl">
@@ -130,7 +130,7 @@ function PosDashboard() {
 
               {/* Product Catalog & Search area (Always visible on lg:, visible on < lg when mobilePosView === 'catalog') */}
               <div
-                className={`flex-1 flex-col p-2.5 sm:p-4 gap-2.5 sm:gap-3 overflow-hidden bg-slate-100 dark:bg-[#0b0f19] ${
+                className={`flex-1 min-h-0 flex flex-col p-2.5 sm:p-4 gap-2.5 sm:gap-3 overflow-hidden bg-slate-100 dark:bg-[#0b0f19] ${
                   mobilePosView === 'cart' ? 'hidden lg:flex' : 'flex'
                 }`}
               >
@@ -170,7 +170,7 @@ function PosDashboard() {
 
               {/* Mobile Full Cart View on < lg */}
               {mobilePosView === 'cart' && (
-                <div className="lg:hidden flex-1 h-full overflow-hidden">
+                <div className="lg:hidden flex-1 min-h-0 h-full max-h-full overflow-hidden">
                   <CartPanel
                     isMobileFullView={true}
                     onBackToCatalog={() => setMobilePosView('catalog')}

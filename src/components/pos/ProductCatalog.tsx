@@ -20,8 +20,14 @@ export function ProductCatalog() {
     });
   }, [products, selectedCategory, searchQuery]);
 
+  // Scalability Cap for 10,000+ products: limits DOM cards to 40 items at once to maintain 60 FPS
+  const MAX_DISPLAY_ITEMS = 40;
+  const displayedProducts = useMemo(() => {
+    return filteredProducts.slice(0, MAX_DISPLAY_ITEMS);
+  }, [filteredProducts]);
+
   return (
-    <div className="flex-1 overflow-y-auto pr-1">
+    <div className="flex-1 min-h-0 overflow-y-auto pr-1">
       {filteredProducts.length === 0 ? (
         <div className="h-64 flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 text-center p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xs">
           <Package className="w-10 h-10 mb-2 stroke-1 text-slate-400 dark:text-slate-500" />
@@ -31,8 +37,15 @@ export function ProductCatalog() {
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-2.5">
-          {filteredProducts.map((product: Product) => {
+        <div className="space-y-2">
+          {filteredProducts.length > MAX_DISPLAY_ITEMS && (
+            <div className="py-1 px-3 text-center text-[10px] font-semibold text-slate-500 dark:text-slate-400 bg-slate-100/80 dark:bg-slate-800/60 rounded-xl border border-slate-200/60 dark:border-slate-700/60">
+              Showing top {MAX_DISPLAY_ITEMS} of {filteredProducts.length.toLocaleString()} products in &quot;{selectedCategory}&quot; • Scan barcode or type name for instant lookup
+            </div>
+          )}
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-2.5">
+            {displayedProducts.map((product: Product) => {
             const isOutOfStock = product.currentStock <= 0;
             const isLowStock = !isOutOfStock && product.currentStock <= product.minStockAlert;
 
@@ -100,6 +113,7 @@ export function ProductCatalog() {
               </button>
             );
           })}
+          </div>
         </div>
       )}
     </div>

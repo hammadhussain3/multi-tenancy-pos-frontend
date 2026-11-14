@@ -45,7 +45,7 @@ export function KhataLedgerView() {
   };
 
   return (
-    <div className="flex-1 flex flex-col h-full overflow-hidden bg-slate-50 dark:bg-[#0b0f19] p-2.5 sm:p-4 gap-2.5 sm:gap-4 transition-colors duration-200">
+    <div className="flex-1 min-h-0 flex flex-col h-full overflow-hidden bg-slate-50 dark:bg-[#0b0f19] p-2.5 sm:p-4 gap-2.5 sm:gap-4 transition-colors duration-200">
       {/* Top Metric Bar */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 shrink-0">
         <div className="p-3.5 sm:p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs flex items-center justify-between">

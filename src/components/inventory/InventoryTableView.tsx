@@ -27,6 +27,10 @@ export function InventoryTableView() {
   const [adjustmentDelta, setAdjustmentDelta] = useState<number>(0);
   const [adjustmentReason, setAdjustmentReason] = useState<string>('Restock from supplier');
 
+  // Pagination for 10,000+ Mart Items Scale
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 50;
+
   // Metrics
   const totalStockValueCost = products.reduce((acc, p) => acc + p.purchasePrice * p.currentStock, 0);
   const totalStockValueRetail = products.reduce((acc, p) => acc + p.retailPrice * p.currentStock, 0);
@@ -51,6 +55,12 @@ export function InventoryTableView() {
     });
   }, [products, selectedCategory, search, stockFilter]);
 
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const paginatedProducts = useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    return filtered.slice(start, start + pageSize);
+  }, [filtered, currentPage, pageSize]);
+
   const handleStockAdjustSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!adjustingProduct || adjustmentDelta === 0) return;
@@ -60,7 +70,7 @@ export function InventoryTableView() {
   };
 
   return (
-    <div className="flex-1 flex flex-col h-full overflow-hidden bg-slate-50 dark:bg-[#0b0f19] p-2.5 sm:p-4 gap-2.5 sm:gap-4 transition-colors duration-200">
+    <div className="flex-1 min-h-0 flex flex-col h-full overflow-hidden bg-slate-50 dark:bg-[#0b0f19] p-2.5 sm:p-4 gap-2.5 sm:gap-4 transition-colors duration-200">
       {/* Top Header & Metrics */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 shrink-0">
         <div>
@@ -197,7 +207,7 @@ export function InventoryTableView() {
                   </td>
                 </tr>
               ) : (
-                filtered.map((prod) => {
+                paginatedProducts.map((prod) => {
                   const isOut = prod.currentStock <= 0;
                   const isLow = !isOut && prod.currentStock <= prod.minStockAlert;
                   const marginPercent =
@@ -312,6 +322,34 @@ export function InventoryTableView() {
             </tbody>
           </table>
         </div>
+
+        {/* Pagination Bar for Mart Scale (10,000+ Items) */}
+        {filtered.length > pageSize && (
+          <div className="p-2.5 sm:p-3 border-t border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/40 flex items-center justify-between text-xs shrink-0">
+            <div className="text-slate-500 dark:text-slate-400 text-[11px]">
+              Showing {(currentPage - 1) * pageSize + 1} to {Math.min(currentPage * pageSize, filtered.length)} of {filtered.length.toLocaleString()} items
+            </div>
+            <div className="flex items-center gap-1.5">
+              <button
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="px-2.5 py-1 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-semibold disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-50 cursor-pointer text-xs"
+              >
+                Previous
+              </button>
+              <span className="px-2 font-bold text-slate-800 dark:text-slate-200 text-[11px]">
+                Page {currentPage} of {totalPages}
+              </span>
+              <button
+                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+                className="px-2.5 py-1 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-semibold disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-50 cursor-pointer text-xs"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Stock Adjustment Modal */}

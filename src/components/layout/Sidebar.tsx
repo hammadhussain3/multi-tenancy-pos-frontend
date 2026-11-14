@@ -69,7 +69,7 @@ export function Sidebar() {
 
   const navContent = (
     <>
-      <div>
+      <div className="flex-1 min-h-0 overflow-y-auto">
         {/* Brand Banner */}
         <div className="h-14 px-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
@@ -148,7 +148,7 @@ export function Sidebar() {
       </div>
 
       {/* Footer / System Status */}
-      <div className="p-3 border-t border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/40">
+      <div className="p-3 border-t border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/40 shrink-0">
         <div className="p-2.5 rounded-xl bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 shadow-2xs">
           <div className="flex items-center justify-between text-[11px] font-semibold text-slate-800 dark:text-slate-200">
             <span>Database Mode</span>
@@ -165,7 +165,7 @@ export function Sidebar() {
   return (
     <>
       {/* Desktop Persistent Sidebar */}
-      <aside className="hidden lg:flex w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex-col justify-between shrink-0 select-none shadow-xs transition-colors duration-200">
+      <aside className="hidden lg:flex w-64 h-full max-h-full min-h-0 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex-col justify-between shrink-0 select-none shadow-xs transition-colors duration-200 overflow-hidden">
         {navContent}
       </aside>
 

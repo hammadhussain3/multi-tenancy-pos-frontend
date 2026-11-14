@@ -35,7 +35,7 @@ export function DayClosingView() {
   };
 
   return (
-    <div className="flex-1 flex flex-col h-full overflow-y-auto bg-slate-50 dark:bg-[#0b0f19] p-3 sm:p-6 space-y-4 sm:space-y-6 transition-colors">
+    <div className="flex-1 min-h-0 flex flex-col h-full overflow-y-auto bg-slate-50 dark:bg-[#0b0f19] p-3 sm:p-6 space-y-4 sm:space-y-6 transition-colors">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-200 dark:border-slate-800">
         <div>

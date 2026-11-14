@@ -38,7 +38,7 @@ export function TopHeader() {
 
   return (
     <>
-      <header className="h-14 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 px-2 sm:px-4 flex items-center justify-between select-none sticky top-0 z-30 shadow-xs transition-colors duration-200">
+      <header className="h-14 shrink-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 px-2 sm:px-4 flex items-center justify-between select-none sticky top-0 z-30 shadow-xs transition-colors duration-200">
         {/* Left: Brand / Tenant Switcher */}
         <div className="flex items-center gap-1.5 sm:gap-3">
           {/* Mobile Menu Hamburger */}
