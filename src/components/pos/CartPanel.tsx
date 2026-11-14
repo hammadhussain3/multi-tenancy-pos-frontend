@@ -400,11 +400,10 @@ export function CartPanel({
           <button
             onClick={handleQuickCash}
             disabled={cart.length === 0}
-            className={`h-9 sm:h-10 px-2 rounded-xl font-black text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-md active:scale-[0.98] ${
-              cart.length > 0
+            className={`h-9 sm:h-10 px-2 rounded-xl font-black text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-md active:scale-[0.98] ${cart.length > 0
                 ? 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-emerald-600/20'
                 : 'bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-600 opacity-60 cursor-not-allowed shadow-none'
-            }`}
+              }`}
           >
             <Banknote className="w-4 h-4 shrink-0" />
             <span className="truncate">{isUrdu ? 'فوری کیش' : 'Quick Cash'}</span>
@@ -414,11 +413,10 @@ export function CartPanel({
           <button
             onClick={() => setShowSplitModal(true)}
             disabled={cart.length === 0}
-            className={`h-9 sm:h-10 px-2 rounded-xl font-black text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-md active:scale-[0.98] ${
-              cart.length > 0
+            className={`h-9 sm:h-10 px-2 rounded-xl font-black text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-md active:scale-[0.98] ${cart.length > 0
                 ? 'bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white shadow-indigo-600/20'
                 : 'bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-600 opacity-60 cursor-not-allowed shadow-none'
-            }`}
+              }`}
           >
             <CreditCard className="w-4 h-4 shrink-0" />
             <span className="truncate">{isUrdu ? 'کھاتہ / کارڈ' : 'Split / Khata'}</span>
@@ -629,7 +627,7 @@ export function CartPanel({
   return (
     <>
       {/* Desktop Persistent Cart Panel */}
-      <aside className="hidden lg:flex flex-col w-80 xl:w-96 bg-white dark:bg-slate-900 border-l border-slate-200/80 dark:border-slate-800 shrink-0 h-full max-h-full min-h-0 shadow-xs transition-colors duration-200 overflow-hidden">
+      <aside className="hidden lg:flex flex-col w-80 xl:w-96 bg-white dark:bg-slate-900 border-l border-slate-200/80 dark:border-slate-800 shrink-0 h-[95%] max-h-[95%] min-h-0 shadow-xs transition-colors duration-200 overflow-hidden">
         {cartContent}
       </aside>
 
@@ -641,9 +639,8 @@ export function CartPanel({
             onClick={() => setIsMobileCartOpen(false)}
           />
           <aside
-            className={`fixed inset-y-0 ${
-              isUrdu ? 'left-0' : 'right-0'
-            } z-50 w-full sm:w-96 max-h-full min-h-0 bg-white dark:bg-slate-900 shadow-2xl flex flex-col border-l border-slate-200/80 dark:border-slate-800 transition-colors duration-200 overflow-hidden`}
+            className={`fixed inset-y-0 ${isUrdu ? 'left-0' : 'right-0'
+              } z-50 w-full sm:w-96 max-h-full min-h-0 bg-white dark:bg-slate-900 shadow-2xl flex flex-col border-l border-slate-200/80 dark:border-slate-800 transition-colors duration-200 overflow-hidden`}
           >
             {cartContent}
           </aside>
