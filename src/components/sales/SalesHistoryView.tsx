@@ -33,7 +33,7 @@ export function SalesHistoryView() {
   const totalSalesAmount = invoices.reduce((sum, inv) => sum + inv.grandTotal, 0);
 
   return (
-    <div className="flex-1 min-h-0 flex flex-col h-full overflow-hidden bg-slate-50 dark:bg-[#0b0f19] p-2.5 sm:p-4 gap-2.5 sm:gap-4 transition-colors">
+    <div className="flex-1 min-h-0 flex flex-col overflow-hidden bg-slate-50 dark:bg-[#0b0f19] p-2.5 sm:p-3.5 gap-2 sm:gap-3 transition-colors">
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 shrink-0">
         <div>
@@ -78,8 +78,8 @@ export function SalesHistoryView() {
       </div>
 
       {/* Invoices Table */}
-      <div className="flex-1 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xs overflow-hidden flex flex-col">
-        <div className="flex-1 overflow-auto">
+      <div className="flex-1 min-h-0 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xs overflow-hidden flex flex-col">
+        <div className="flex-1 min-h-0 overflow-auto">
           <table className="w-full text-left text-xs border-collapse min-w-[740px]">
             <thead className="bg-slate-50 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 uppercase text-[10px] font-semibold sticky top-0 z-10 border-b border-slate-200 dark:border-slate-800 backdrop-blur-xs">
               <tr>
