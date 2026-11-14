@@ -77,6 +77,17 @@ export interface Invoice {
   changeGiven?: number;
   fbrInvoiceNo?: string;
   isSynced: boolean;
+  status?: 'completed' | 'refunded';
+  refundReason?: string;
+}
+
+export interface HeldOrder {
+  id: string;
+  heldAt: string;
+  items: CartItem[];
+  customer: Customer | null;
+  subtotal: number;
+  note?: string;
 }
 
 export interface TenantInfo {

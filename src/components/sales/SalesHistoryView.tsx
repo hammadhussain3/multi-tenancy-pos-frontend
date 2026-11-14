@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { Receipt, Search, CheckCircle2, Clock, Eye } from 'lucide-react';
+import { Receipt, Search, CheckCircle2, Clock, Eye, RotateCcw } from 'lucide-react';
 import { usePos } from '../../context/usePos';
 import type { Invoice } from '../../types/pos';
 import { ThermalReceiptModal } from '../pos/ThermalReceiptModal';
 
 export function SalesHistoryView() {
-  const { invoices } = usePos();
+  const { invoices, refundInvoice } = usePos();
   const [search, setSearch] = useState('');
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
 
@@ -141,25 +141,49 @@ export function SalesHistoryView() {
                     </td>
 
                     <td className="py-2.5 px-3 text-center">
-                      {inv.isSynced ? (
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 inline-flex items-center gap-1">
-                          <CheckCircle2 className="w-2.5 h-2.5" /> Synced
-                        </span>
-                      ) : (
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800 inline-flex items-center gap-1">
-                          <Clock className="w-2.5 h-2.5" /> Local Queue
-                        </span>
-                      )}
+                      <div className="flex flex-col items-center gap-1">
+                        {inv.status === 'refunded' ? (
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800 inline-flex items-center gap-1">
+                            Refunded
+                          </span>
+                        ) : inv.isSynced ? (
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 inline-flex items-center gap-1">
+                            <CheckCircle2 className="w-2.5 h-2.5" /> Synced
+                          </span>
+                        ) : (
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800 inline-flex items-center gap-1">
+                            <Clock className="w-2.5 h-2.5" /> Local Queue
+                          </span>
+                        )}
+                      </div>
                     </td>
 
                     <td className="py-2.5 px-3 text-right">
-                      <button
-                        onClick={() => setSelectedInvoice(inv)}
-                        className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-[11px] font-medium transition-colors inline-flex items-center gap-1 cursor-pointer"
-                      >
-                        <Eye className="w-3 h-3 text-indigo-600 dark:text-indigo-400" />
-                        <span>Receipt</span>
-                      </button>
+                      <div className="flex items-center justify-end gap-1.5">
+                        <button
+                          onClick={() => setSelectedInvoice(inv)}
+                          className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-[11px] font-medium transition-colors inline-flex items-center gap-1 cursor-pointer"
+                          title="View & Reprint Thermal Receipt"
+                        >
+                          <Eye className="w-3 h-3 text-indigo-600 dark:text-indigo-400" />
+                          <span>Receipt</span>
+                        </button>
+
+                        {inv.status !== 'refunded' && (
+                          <button
+                            onClick={() => {
+                              if (window.confirm(`Process return/refund for invoice ${inv.invoiceNo} and restock items?`)) {
+                                refundInvoice(inv.id, 'Customer return processed at counter');
+                              }
+                            }}
+                            className="px-2 py-1 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/40 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 text-[11px] font-medium transition-colors inline-flex items-center gap-1 cursor-pointer"
+                            title="Return goods & restock items"
+                          >
+                            <RotateCcw className="w-3 h-3" />
+                            <span className="hidden sm:inline">Return</span>
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))

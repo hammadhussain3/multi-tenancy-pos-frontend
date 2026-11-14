@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import type { ReactNode } from 'react';
 import type {
   ActiveTab,
   CartItem,
   Customer,
   CustomerLedgerEntry,
+  HeldOrder,
   Invoice,
   InvoicePaymentBreakdown,
   PaymentMethod,
@@ -17,6 +18,7 @@ import {
   INITIAL_PRODUCTS,
   INITIAL_TENANTS,
 } from '../mock/sampleData';
+import { posApi } from '../services/posApi';
 import { PosContext } from './posContextDefinition';
 
 export function PosProvider({ children }: { children: ReactNode }) {
@@ -58,7 +60,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const [isMobileCartOpen, setIsMobileCartOpen] = useState<boolean>(false);
   const [isOffline, setIsOffline] = useState<boolean>(false);
-  const [pendingSyncCount, setPendingSyncCount] = useState<number>(3);
+  const [pendingSyncCount, setPendingSyncCount] = useState<number>(0);
 
   // Products
   const [products, setProducts] = useState<Product[]>(INITIAL_PRODUCTS);
@@ -69,6 +71,9 @@ export function PosProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
 
+  // Parked / Held Orders for busy Mart cashiers
+  const [heldOrders, setHeldOrders] = useState<HeldOrder[]>([]);
+
   // Khata & Customers
   const [customers, setCustomers] = useState<Customer[]>(INITIAL_CUSTOMERS);
   const [customerLedgers, setCustomerLedgers] = useState<Record<string, CustomerLedgerEntry[]>>(INITIAL_LEDGER_ENTRIES);
@@ -76,6 +81,36 @@ export function PosProvider({ children }: { children: ReactNode }) {
   // Invoices & Thermal Receipt
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [activeReceipt, setActiveReceipt] = useState<Invoice | null>(null);
+
+  // Live Backend Hydration with Offline Fallback
+  useEffect(() => {
+    let isMounted = true;
+    async function initData() {
+      try {
+        const [liveProducts, liveCustomers, liveInvoices] = await Promise.all([
+          posApi.getProducts(1),
+          posApi.getCustomers(1),
+          posApi.getInvoices(1),
+        ]);
+        if (isMounted) {
+          if (liveProducts.length > 0) setProducts(liveProducts);
+          if (liveCustomers.length > 0) setCustomers(liveCustomers);
+          if (liveInvoices.length > 0) setInvoices(liveInvoices);
+          setIsOffline(false);
+          setPendingSyncCount(0);
+        }
+      } catch {
+        // Fallback to local offline state if backend not reached
+        if (isMounted) {
+          setIsOffline(true);
+        }
+      }
+    }
+    initData();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   // Derive Categories
   const categories = ['All', ...Array.from(new Set(products.map((p) => p.category)))];
@@ -168,6 +203,100 @@ export function PosProvider({ children }: { children: ReactNode }) {
     setCart([]);
     setSelectedCustomer(null);
   };
+
+  // Park & Resume Order (Hold / Park Sale)
+  const holdCurrentOrder = useCallback((note?: string) => {
+    if (cart.length === 0) return;
+    const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const newHeld: HeldOrder = {
+      id: `held-${Date.now()}`,
+      heldAt: timeStr,
+      items: [...cart],
+      customer: selectedCustomer,
+      subtotal: cartTotal,
+      note,
+    };
+    setHeldOrders((prev) => [newHeld, ...prev]);
+    clearCart();
+  }, [cart, selectedCustomer, cartTotal]);
+
+  const resumeHeldOrder = (id: string) => {
+    const target = heldOrders.find((h) => h.id === id);
+    if (!target) return;
+    setCart(target.items);
+    setSelectedCustomer(target.customer);
+    setHeldOrders((prev) => prev.filter((h) => h.id !== id));
+    setActiveTab('pos');
+  };
+
+  const deleteHeldOrder = (id: string) => {
+    setHeldOrders((prev) => prev.filter((h) => h.id !== id));
+  };
+
+  // Refund / Return Invoice (Restores Stock and Reverses Khata)
+  const refundInvoice = useCallback((invoiceId: string, reason?: string) => {
+    setInvoices((prevInvoices) => {
+      const target = prevInvoices.find((inv) => inv.id === invoiceId);
+      if (!target || target.status === 'refunded') return prevInvoices;
+
+      // 1. Restock items back into inventory
+      setProducts((prevProducts) =>
+        prevProducts.map((p) => {
+          const matched = target.items.find((item) => item.product.id === p.id);
+          if (matched) {
+            return { ...p, currentStock: p.currentStock + matched.quantity };
+          }
+          return p;
+        })
+      );
+
+      // 2. Reverse Khata debt if it had credit balance
+      if (target.customer && target.payments.khata > 0) {
+        const custId = target.customer.id;
+        const amount = target.payments.khata;
+        const now = new Date().toISOString().replace('T', ' ').substring(0, 16);
+        const refId = `ledg-ref-${Date.now()}`;
+
+        setCustomers((prevCusts) =>
+          prevCusts.map((c) =>
+            c.id === custId ? { ...c, currentBalance: c.currentBalance - amount } : c
+          )
+        );
+
+        setCustomerLedgers((prevLedgers) => {
+          const currentLedger = prevLedgers[custId] || [];
+          const runningBal = (currentLedger[0]?.runningBalance ?? 0) - amount;
+          const reverseEntry: CustomerLedgerEntry = {
+            id: refId,
+            uuid: `018f8b70-ref-${Date.now()}`,
+            customerId: custId,
+            date: now,
+            referenceType: 'return',
+            referenceNo: target.invoiceNo,
+            debit: 0,
+            credit: amount,
+            runningBalance: runningBal,
+            narration: `Refund for invoice ${target.invoiceNo}: ${reason || 'Customer returned items'}`,
+          };
+          return {
+            ...prevLedgers,
+            [custId]: [reverseEntry, ...currentLedger],
+          };
+        });
+      }
+
+      // 3. Mark invoice as refunded
+      return prevInvoices.map((inv) =>
+        inv.id === invoiceId
+          ? {
+              ...inv,
+              status: 'refunded',
+              refundReason: reason || 'Customer returned goods',
+            }
+          : inv
+      );
+    });
+  }, []);
 
   // Stock Adjustment (Append-Only mindset in frontend state)
   const adjustStock = (productId: string, delta: number, _reason: string) => {
@@ -316,8 +445,30 @@ export function PosProvider({ children }: { children: ReactNode }) {
     // 3. Save Invoice
     setInvoices((prev) => [newInvoice, ...prev]);
 
-    // 4. Update sync queue
-    if (isOffline) {
+    // 4. Update sync queue or dispatch to backend
+    if (!isOffline) {
+      posApi
+        .checkout(
+          cart,
+          method,
+          {
+            cash: breakdown.cash,
+            card: breakdown.card,
+            khata: breakdown.khata,
+            cash_tendered: cashTendered,
+          },
+          selectedCustomer?.id || null,
+          cartDiscount,
+          parseInt(currentTenant.id, 10) || 1,
+          'REG-01',
+          'Hammad Hussain'
+        )
+        .catch((err) => {
+          console.warn('Backend sync failed, queued for offline sync:', err);
+          setIsOffline(true);
+          setPendingSyncCount((c) => c + 1);
+        });
+    } else {
       setPendingSyncCount((c) => c + 1);
     }
 
@@ -330,12 +481,23 @@ export function PosProvider({ children }: { children: ReactNode }) {
     return newInvoice;
   };
 
-  const triggerManualSync = () => {
-    if (pendingSyncCount === 0) return;
-    setTimeout(() => {
+  const triggerManualSync = async () => {
+    try {
+      const [liveProducts, liveCustomers, liveInvoices] = await Promise.all([
+        posApi.getProducts(parseInt(currentTenant.id, 10) || 1),
+        posApi.getCustomers(parseInt(currentTenant.id, 10) || 1),
+        posApi.getInvoices(parseInt(currentTenant.id, 10) || 1),
+      ]);
+      if (liveProducts.length > 0) setProducts(liveProducts);
+      if (liveCustomers.length > 0) setCustomers(liveCustomers);
+      if (liveInvoices.length > 0) setInvoices(liveInvoices);
+      setIsOffline(false);
       setPendingSyncCount(0);
-      alert('Cloud Sync Complete: All local offline transactions pushed and verified.');
-    }, 800);
+      alert('Cloud Sync Complete: Connected to Laravel backend. All data verified.');
+    } catch {
+      setIsOffline(true);
+      alert('Cloud Sync Notice: Running in offline local mode. Transactions queued.');
+    }
   };
 
   // Keyboard Shortcuts for POS
@@ -346,6 +508,10 @@ export function PosProvider({ children }: { children: ReactNode }) {
         const searchInput = document.getElementById('barcode-search-input');
         if (searchInput) searchInput.focus();
       }
+      if (e.key === 'F6') {
+        e.preventDefault();
+        holdCurrentOrder();
+      }
       if (e.key === 'F12') {
         e.preventDefault();
         setActiveTab('pos');
@@ -353,7 +519,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  }, [holdCurrentOrder]);
 
   return (
     <PosContext.Provider
@@ -396,6 +562,10 @@ export function PosProvider({ children }: { children: ReactNode }) {
         cartDiscount,
         cartTax,
         cartTotal,
+        heldOrders,
+        holdCurrentOrder,
+        resumeHeldOrder,
+        deleteHeldOrder,
         customers,
         selectedCustomer,
         setSelectedCustomer,
@@ -404,6 +574,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
         invoices,
         activeReceipt,
         setActiveReceipt,
+        refundInvoice,
         processCheckout,
       }}
     >

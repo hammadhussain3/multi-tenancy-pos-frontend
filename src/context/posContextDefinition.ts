@@ -4,6 +4,7 @@ import type {
   CartItem,
   Customer,
   CustomerLedgerEntry,
+  HeldOrder,
   Invoice,
   InvoicePaymentBreakdown,
   PaymentMethod,
@@ -56,6 +57,11 @@ export interface PosContextType {
   cartTax: number;
   cartTotal: number;
 
+  heldOrders: HeldOrder[];
+  holdCurrentOrder: (note?: string) => void;
+  resumeHeldOrder: (id: string) => void;
+  deleteHeldOrder: (id: string) => void;
+
   customers: Customer[];
   selectedCustomer: Customer | null;
   setSelectedCustomer: (cust: Customer | null) => void;
@@ -65,6 +71,7 @@ export interface PosContextType {
   invoices: Invoice[];
   activeReceipt: Invoice | null;
   setActiveReceipt: (inv: Invoice | null) => void;
+  refundInvoice: (invoiceId: string, reason?: string) => void;
   processCheckout: (
     method: PaymentMethod,
     breakdown: InvoicePaymentBreakdown,

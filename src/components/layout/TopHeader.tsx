@@ -263,6 +263,13 @@ export function TopHeader() {
               </div>
 
               <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50 dark:bg-slate-800/60">
+                <span className="font-semibold text-slate-700 dark:text-slate-300">Hold / Park Current Sale</span>
+                <kbd className="px-2 py-0.5 rounded-lg bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 font-mono font-bold text-amber-600 dark:text-amber-400 shadow-2xs">
+                  F6
+                </kbd>
+              </div>
+
+              <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50 dark:bg-slate-800/60">
                 <span className="font-semibold text-slate-700 dark:text-slate-300">Return to POS Terminal</span>
                 <kbd className="px-2 py-0.5 rounded-lg bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 font-mono font-bold text-indigo-600 dark:text-indigo-400 shadow-2xs">
                   F12
