@@ -40,12 +40,14 @@ export function InventoryTableView() {
   const filtered = useMemo(() => {
     return products.filter((p) => {
       const matchCat = selectedCategory === 'All' || p.category === selectedCategory;
-      const q = search.toLowerCase().trim();
+      const rawQ = search.trim();
+      const norm = (s: string) =>
+        s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+      const qTokens = rawQ ? norm(rawQ).split(/\s+/).filter(Boolean) : [];
+      const targetText = norm(`${p.name} ${p.barcode} ${p.sku}`);
       const matchSearch =
-        !q ||
-        p.name.toLowerCase().includes(q) ||
-        p.barcode.includes(q) ||
-        p.sku.toLowerCase().includes(q);
+        qTokens.length === 0 || qTokens.every((tok) => targetText.includes(tok));
 
       let matchStock = true;
       if (stockFilter === 'low') matchStock = p.currentStock > 0 && p.currentStock <= p.minStockAlert;

@@ -7,16 +7,19 @@ export function ProductCatalog() {
   const { products, selectedCategory, searchQuery, addToCart, isUrdu } = usePos();
 
   const filteredProducts = useMemo(() => {
+    const rawQ = searchQuery.trim();
+    const norm = (s: string) =>
+      s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+    const qTokens = rawQ ? norm(rawQ).split(/\s+/).filter(Boolean) : [];
+
     return products.filter((p) => {
       const matchesCategory = selectedCategory === 'All' || p.category === selectedCategory;
-      const q = searchQuery.toLowerCase().trim();
-      const matchesSearch =
-        !q ||
-        p.name.toLowerCase().includes(q) ||
-        (p.nameUrdu && p.nameUrdu.includes(q)) ||
-        p.barcode.includes(q) ||
-        p.sku.toLowerCase().includes(q);
-      return matchesCategory && matchesSearch;
+      if (!matchesCategory) return false;
+      if (qTokens.length === 0) return true;
+
+      const targetText = norm(`${p.name} ${p.nameUrdu || ''} ${p.barcode} ${p.sku}`);
+      return qTokens.every((tok) => targetText.includes(tok));
     });
   }, [products, selectedCategory, searchQuery]);
 

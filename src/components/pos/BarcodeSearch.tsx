@@ -64,11 +64,16 @@ export function BarcodeSearch() {
         return;
       }
 
-      const partialMatch = products.find(
-        (p) =>
-          p.name.toLowerCase().includes(target.toLowerCase()) ||
-          p.barcode.includes(target)
-      );
+      const norm = (s: string) =>
+        s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+      const targetNorm = norm(target);
+      const targetTokens = targetNorm.split(/\s+/).filter(Boolean);
+
+      const partialMatch = products.find((p) => {
+        const text = norm(`${p.name} ${p.nameUrdu || ''} ${p.barcode} ${p.sku}`);
+        return targetTokens.every((tok) => text.includes(tok));
+      });
       if (partialMatch) {
         addToCart(partialMatch, qty);
         setSearchQuery('');
@@ -103,12 +108,15 @@ export function BarcodeSearch() {
       return;
     }
 
-    const found = products.find(
-      (p) =>
-        p.barcode === target ||
-        p.sku.toLowerCase() === target.toLowerCase() ||
-        p.name.toLowerCase().includes(target.toLowerCase())
-    );
+    const norm = (s: string) =>
+      s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    const targetNorm = norm(target);
+    const targetTokens = targetNorm.split(/\s+/).filter(Boolean);
+
+    const found = products.find((p) => {
+      const text = norm(`${p.name} ${p.nameUrdu || ''} ${p.barcode} ${p.sku}`);
+      return targetTokens.every((tok) => text.includes(tok));
+    });
     if (found) {
       addToCart(found, qty);
       setSearchQuery('');

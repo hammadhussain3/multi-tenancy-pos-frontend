@@ -1,6 +1,21 @@
 export type PaymentMethod = 'cash' | 'card' | 'khata' | 'split';
 
-export type ProductUnit = 'pcs' | 'kg' | 'g' | 'pack' | 'box' | 'ltr';
+export type ProductUnit =
+  | 'pcs'
+  | 'kg'
+  | 'g'
+  | 'pack'
+  | 'box'
+  | 'ltr'
+  | 'tin'
+  | 'bottle'
+  | 'can'
+  | 'jar'
+  | 'tub'
+  | 'cup'
+  | 'tube'
+  | 'crate'
+  | 'doz';
 
 export interface Product {
   id: string;
