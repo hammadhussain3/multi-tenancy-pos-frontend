@@ -25,17 +25,11 @@ import { PosContext } from './posContextDefinition';
 export function PosProvider({ children }: { children: ReactNode }) {
   // System State
   const [activeTab, setActiveTab] = useState<ActiveTab>('pos');
-  const [posTerminalMode, setPosTerminalMode] = useState<PosTerminalMode>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('posify_terminal_mode');
-      if (saved === 'mart' || saved === 'catalog') return saved;
-    }
-    return 'mart';
-  });
+  const [posTerminalMode, setPosTerminalMode] = useState<PosTerminalMode>('catalog');
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      localStorage.setItem('posify_terminal_mode', posTerminalMode);
+      localStorage.setItem('posify_terminal_mode', 'catalog');
     }
   }, [posTerminalMode]);
 
