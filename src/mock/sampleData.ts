@@ -2,8 +2,9 @@ import type { Customer, CustomerLedgerEntry, Product, TenantInfo } from '../type
 
 export const INITIAL_TENANTS: TenantInfo[] = [
   {
-    id: 'tenant-001',
+    id: '1',
     name: 'Al-Madina Cash & Carry',
+    subdomain: 'almadina',
     branch: 'Main Boulevard, Gulberg III, Lahore',
     address: 'Shop 14-16, Commercial Zone, Lahore',
     phone: '+92 42 35789012',
@@ -11,17 +12,22 @@ export const INITIAL_TENANTS: TenantInfo[] = [
     strn: '3277876123456',
     fbrPosId: 'POS-LHR-8821',
     currency: 'PKR',
+    plan: 'pro',
+    modules: ['pos', 'inventory', 'khata', 'reports'],
   },
   {
-    id: 'tenant-002',
-    name: 'Al-Madina Mart & Pharmacy',
-    branch: 'DHA Phase 5 Branch, Lahore',
-    address: 'Plaza 24, CCA Phase 5 DHA, Lahore',
-    phone: '+92 42 35891234',
-    ntn: '7823910-4',
-    strn: '3277876123456',
-    fbrPosId: 'POS-LHR-8822',
+    id: '2',
+    name: 'Bismillah Supermart',
+    subdomain: 'bismillah',
+    branch: 'Commercial Area, Phase 5 DHA, Karachi',
+    address: 'Plot 42-C, Phase 5 DHA, Karachi',
+    phone: '+92 21 35891234',
+    ntn: '8910245-1',
+    strn: '3277876999999',
+    fbrPosId: 'POS-KHI-4401',
     currency: 'PKR',
+    plan: 'basic',
+    modules: ['pos', 'inventory', 'khata'],
   },
 ];
 

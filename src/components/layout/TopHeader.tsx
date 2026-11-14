@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import {
   Building2,
   Cloud,
@@ -13,8 +13,18 @@ import {
   Sun,
   Moon,
   Store,
+  X,
 } from 'lucide-react';
 import { usePos } from '../../context/usePos';
+
+interface ThemeToast {
+  id: number;
+  mode: 'light' | 'dark';
+  title: string;
+  subtitle: string;
+  urduTitle: string;
+  urduSubtitle: string;
+}
 
 export function TopHeader() {
   const {
@@ -35,6 +45,51 @@ export function TopHeader() {
 
   const [showTenantDropdown, setShowTenantDropdown] = useState(false);
   const [showHotkeyModal, setShowHotkeyModal] = useState(false);
+
+  const [themeToast, setThemeToast] = useState<ThemeToast | null>(null);
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (toastTimerRef.current) {
+        clearTimeout(toastTimerRef.current);
+      }
+    };
+  }, []);
+
+  const handleToggleTheme = () => {
+    const nextTheme = theme === 'light' ? 'dark' : 'light';
+    toggleTheme();
+
+    if (toastTimerRef.current) {
+      clearTimeout(toastTimerRef.current);
+    }
+
+    const toastData: ThemeToast =
+      nextTheme === 'dark'
+        ? {
+            id: Date.now(),
+            mode: 'dark',
+            title: 'Dark Mode Activated',
+            subtitle: 'Eye-friendly low-glare interface configured for night shifts.',
+            urduTitle: 'ڈارک موڈ آن ہو گیا ہے',
+            urduSubtitle: 'نائٹ شفٹ اور آنکھوں کے آرام کے لیے ڈارک انٹرفیس فعال کر دیا گیا ہے۔',
+          }
+        : {
+            id: Date.now(),
+            mode: 'light',
+            title: 'Light Mode Activated',
+            subtitle: 'High-contrast bright display optimized for supermarket lighting.',
+            urduTitle: 'لائٹ موڈ آن ہو گیا ہے',
+            urduSubtitle: 'مارٹ کی روشن روشنی کے لیے صاف اور واضح لائٹ انٹرفیس فعال کر دیا گیا ہے۔',
+          };
+
+    setThemeToast(toastData);
+
+    toastTimerRef.current = setTimeout(() => {
+      setThemeToast(null);
+    }, 3200);
+  };
 
   return (
     <>
@@ -186,25 +241,42 @@ export function TopHeader() {
             <span>FBR POS</span>
           </div>
 
-          {/* Theme Switcher Button */}
-          <button
-            onClick={toggleTheme}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-slate-100/80 hover:bg-slate-200/80 dark:bg-slate-800/80 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200/60 dark:border-slate-700/60 text-xs font-bold transition-all cursor-pointer shadow-2xs active:scale-95"
-            title={theme === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
-            aria-label="Toggle theme color"
-          >
-            {theme === 'light' ? (
-              <>
-                <Moon className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
-                <span className="hidden sm:inline">Dark</span>
-              </>
-            ) : (
-              <>
-                <Sun className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                <span className="hidden sm:inline">Light</span>
-              </>
-            )}
-          </button>
+          {/* Interactive Light / Dark Toggle Switch */}
+          <div className="flex items-center gap-1.5" title={theme === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode'}>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={theme === 'dark'}
+              onClick={handleToggleTheme}
+              className={`group relative inline-flex h-8 w-15 shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors duration-300 ease-in-out focus:outline-hidden focus:ring-2 focus:ring-indigo-500/50 shadow-inner select-none ${
+                theme === 'dark'
+                  ? 'bg-slate-800 border border-indigo-500/50 text-indigo-400'
+                  : 'bg-slate-200/90 border border-slate-300 text-amber-500'
+              }`}
+              aria-label="Toggle light and dark theme mode"
+            >
+              {/* Stationary track icons */}
+              <span className="absolute inset-0 flex items-center justify-between px-2 text-[10px] pointer-events-none">
+                <Sun className={`w-3.5 h-3.5 transition-opacity duration-200 ${theme === 'dark' ? 'text-amber-400/80 opacity-70' : 'opacity-0'}`} />
+                <Moon className={`w-3.5 h-3.5 transition-opacity duration-200 ${theme === 'light' ? 'text-indigo-600/70 opacity-70' : 'opacity-0'}`} />
+              </span>
+
+              {/* Smooth Gliding Knob with Icon */}
+              <span
+                className={`pointer-events-none flex h-6 w-6 transform items-center justify-center rounded-full shadow-md ring-0 transition-transform duration-300 ease-spring ${
+                  theme === 'dark'
+                    ? 'translate-x-7 bg-slate-900 border border-indigo-500/60 text-indigo-400'
+                    : 'translate-x-0 bg-white border border-amber-300 text-amber-500'
+                }`}
+              >
+                {theme === 'dark' ? (
+                  <Moon className="w-3.5 h-3.5 fill-indigo-400/20" />
+                ) : (
+                  <Sun className="w-3.5 h-3.5 fill-amber-500/20" />
+                )}
+              </span>
+            </button>
+          </div>
 
           {/* Keyboard Shortcuts Guide */}
           <button
@@ -241,6 +313,83 @@ export function TopHeader() {
           </div>
         </div>
       </header>
+
+      {/* Theme Mode Activated Floating Toast */}
+      {themeToast && (
+        <aside
+          aria-label="Theme notification"
+          className="fixed top-16 right-4 sm:right-6 z-50 max-w-sm w-[calc(100vw-2rem)] sm:w-96 rounded-2xl p-3.5 shadow-2xl backdrop-blur-md border animate-in slide-in-from-top-4 fade-in duration-300 select-none transition-all"
+          style={{
+            backgroundColor: themeToast.mode === 'dark' ? 'rgba(15, 23, 42, 0.96)' : 'rgba(255, 255, 255, 0.96)',
+            borderColor: themeToast.mode === 'dark' ? 'rgba(99, 102, 241, 0.4)' : 'rgba(245, 158, 11, 0.4)',
+          }}
+        >
+          <div className="flex items-start gap-3">
+            {/* Icon with glow halo */}
+            <div
+              className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-md ${
+                themeToast.mode === 'dark'
+                  ? 'bg-gradient-to-tr from-indigo-950 to-slate-800 text-indigo-400 border border-indigo-700/60 shadow-indigo-900/40'
+                  : 'bg-gradient-to-tr from-amber-50 to-orange-100 text-amber-600 border border-amber-300/60 shadow-amber-500/20'
+              }`}
+            >
+              {themeToast.mode === 'dark' ? (
+                <Moon className="w-5 h-5 fill-indigo-400/20" />
+              ) : (
+                <Sun className="w-5 h-5 fill-amber-500/20" />
+              )}
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 min-w-0 pr-1">
+              <div className="flex items-center gap-1.5">
+                <span
+                  className={`px-1.5 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider ${
+                    themeToast.mode === 'dark'
+                      ? 'bg-indigo-900/60 text-indigo-300 border border-indigo-700/60'
+                      : 'bg-amber-100 text-amber-800 border border-amber-300'
+                  }`}
+                >
+                  {themeToast.mode === 'dark' ? 'Dark Theme' : 'Light Theme'}
+                </span>
+                <span className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">
+                  POSify Theme Engine
+                </span>
+              </div>
+
+              <div className="text-xs font-black text-slate-900 dark:text-slate-100 mt-1">
+                {isUrdu ? themeToast.urduTitle : themeToast.title}
+              </div>
+
+              <div className="text-[11px] text-slate-600 dark:text-slate-300 mt-0.5 leading-snug">
+                {isUrdu ? themeToast.urduSubtitle : themeToast.subtitle}
+              </div>
+            </div>
+
+            {/* Dismiss Button */}
+            <button
+              type="button"
+              onClick={() => setThemeToast(null)}
+              className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+              aria-label="Dismiss notification"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+
+          {/* Auto-dismiss countdown bar */}
+          <div className="w-full bg-slate-200 dark:bg-slate-800 h-1 rounded-full mt-3 overflow-hidden">
+            <div
+              className={`h-full ${
+                themeToast.mode === 'dark' ? 'bg-indigo-500' : 'bg-amber-500'
+              }`}
+              style={{
+                animation: 'shrinkWidth 3.2s linear forwards',
+              }}
+            />
+          </div>
+        </aside>
+      )}
 
       {/* Hotkey Guide Modal */}
       {showHotkeyModal && (

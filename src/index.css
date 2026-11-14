@@ -76,6 +76,15 @@
 }
 
 /* 80mm ESC/POS Thermal Receipt Print Styling */
+@keyframes shrinkWidth {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0%;
+  }
+}
+
 @media print {
   body * {
     visibility: hidden;

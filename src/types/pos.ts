@@ -107,7 +107,9 @@ export interface HeldOrder {
 
 export interface TenantInfo {
   id: string;
+  uuid?: string;
   name: string;
+  subdomain?: string;
   branch: string;
   address: string;
   phone: string;
@@ -115,9 +117,12 @@ export interface TenantInfo {
   strn?: string;
   fbrPosId?: string;
   currency: string;
+  plan?: string;
+  modules?: string[];
+  expiresAt?: string;
+  isExpired?: boolean;
 }
 
 export type ActiveTab = 'pos' | 'inventory' | 'khata' | 'sales' | 'register' | 'reports';
 
 export type PosTerminalMode = 'mart' | 'catalog';
-

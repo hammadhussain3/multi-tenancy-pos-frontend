@@ -40,7 +40,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
     timestamp: number;
   } | null>(null);
 
-  const [tenants] = useState<TenantInfo[]>(INITIAL_TENANTS);
+  const [tenants, setTenants] = useState<TenantInfo[]>(INITIAL_TENANTS);
   const [currentTenant, setCurrentTenant] = useState<TenantInfo>(INITIAL_TENANTS[0]);
   const [isUrdu, setIsUrdu] = useState<boolean>(false);
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
@@ -98,17 +98,23 @@ export function PosProvider({ children }: { children: ReactNode }) {
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [activeReceipt, setActiveReceipt] = useState<Invoice | null>(null);
 
-  // Live Backend Hydration with Offline Fallback
+  // Live Backend Hydration with Multi-Tenant Support & Offline Fallback
   useEffect(() => {
     let isMounted = true;
     async function initData() {
       try {
-        const [liveProducts, liveCustomers, liveInvoices] = await Promise.all([
-          posApi.getProducts(1),
-          posApi.getCustomers(1),
-          posApi.getInvoices(1),
+        const tid = parseInt(currentTenant.id, 10) || 1;
+        posApi.setActiveTenantId(tid);
+
+        const [liveTenants, liveProducts, liveCustomers, liveInvoices] = await Promise.all([
+          posApi.getTenants().catch(() => INITIAL_TENANTS),
+          posApi.getProducts(tid),
+          posApi.getCustomers(tid),
+          posApi.getInvoices(tid),
         ]);
+
         if (isMounted) {
+          if (liveTenants && liveTenants.length > 0) setTenants(liveTenants);
           if (liveProducts.length > 0) setProducts(liveProducts);
           if (liveCustomers.length > 0) setCustomers(liveCustomers);
           if (liveInvoices.length > 0) setInvoices(liveInvoices);
@@ -126,7 +132,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [currentTenant.id]);
 
   // Derive Categories
   const categories = ['All', ...Array.from(new Set(products.map((p) => p.category)))];

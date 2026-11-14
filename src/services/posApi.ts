@@ -5,9 +5,30 @@ import type {
   Invoice,
   PaymentMethod,
   Product,
+  TenantInfo,
 } from '../types/pos';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000/api/v1/pos';
+
+// Active Tenant ID management
+let currentTenantId: number | string = 1;
+
+export function setActiveTenantId(id: number | string) {
+  currentTenantId = id;
+}
+
+export function getActiveTenantId(): number | string {
+  return currentTenantId;
+}
+
+function getHeaders(customHeaders: Record<string, string> = {}): Record<string, string> {
+  return {
+    'Content-Type': 'application/json',
+    Accept: 'application/json',
+    'X-Tenant-ID': String(currentTenantId),
+    ...customHeaders,
+  };
+}
 
 // Backend DTO representations (snake_case)
 export interface BackendProductDTO {
@@ -96,6 +117,22 @@ export interface BackendDayClosingSummaryDTO {
   khata_sales: number;
 }
 
+export interface BackendTenantDTO {
+  id: number;
+  uuid: string;
+  name: string;
+  subdomain?: string;
+  branch: string;
+  address?: string;
+  phone?: string;
+  currency: string;
+  status: string;
+  plan?: string;
+  modules?: string[];
+  expires_at?: string;
+  is_expired?: boolean;
+}
+
 // ---------------------------------------------------------------------------
 // Adapters (DTO <-> Domain Model)
 // ---------------------------------------------------------------------------
@@ -152,7 +189,7 @@ export function mapBackendInvoiceToInvoice(dto: BackendInvoiceDTO, tenantId = '1
     id: dto.id.toString(),
     uuid: dto.uuid,
     invoiceNo: dto.invoice_no,
-    date: dto.date,
+    date: dto.date || new Date().toISOString().substring(0, 10),
     tenantId,
     deviceId: dto.device_id,
     cashierName: dto.cashier_name,
@@ -167,15 +204,15 @@ export function mapBackendInvoiceToInvoice(dto: BackendInvoiceDTO, tenantId = '1
           currentBalance: 0,
         }
       : undefined,
-    items: dto.items.map((i) => ({
+    items: (dto.items || []).map((i) => ({
       product: {
         id: i.product_id.toString(),
         uuid: '',
-        name: i.name,
         barcode: '',
         sku: '',
-        category: '',
-        unit: i.unit as Product['unit'],
+        name: i.name,
+        category: 'Grocery',
+        unit: (i.unit || 'pcs') as Product['unit'],
         purchasePrice: 0,
         retailPrice: i.unit_price,
         currentStock: 0,
@@ -205,26 +242,75 @@ export function mapBackendInvoiceToInvoice(dto: BackendInvoiceDTO, tenantId = '1
   };
 }
 
+export function mapBackendTenantToTenantInfo(dto: BackendTenantDTO): TenantInfo {
+  return {
+    id: dto.id.toString(),
+    uuid: dto.uuid,
+    name: dto.name,
+    subdomain: dto.subdomain,
+    branch: dto.branch,
+    address: dto.address || '',
+    phone: dto.phone || '',
+    currency: dto.currency || 'PKR',
+    plan: dto.plan,
+    modules: dto.modules,
+    expiresAt: dto.expires_at,
+    isExpired: dto.is_expired,
+  };
+}
+
 // ---------------------------------------------------------------------------
 // POS API Client Operations
 // ---------------------------------------------------------------------------
 
 export const posApi = {
+  // Multi-Tenancy
+  setActiveTenantId(id: number | string) {
+    setActiveTenantId(id);
+  },
+
+  getActiveTenantId(): number | string {
+    return getActiveTenantId();
+  },
+
+  async getCurrentTenant(): Promise<TenantInfo> {
+    const res = await fetch(`${API_BASE_URL}/tenant/current`, {
+      headers: getHeaders(),
+    });
+    if (!res.ok) throw new Error(`Failed to fetch current tenant: ${res.statusText}`);
+    const json = await res.json();
+    return mapBackendTenantToTenantInfo(json.data);
+  },
+
+  async getTenants(): Promise<TenantInfo[]> {
+    const res = await fetch(`${API_BASE_URL}/tenants`, {
+      headers: getHeaders(),
+    });
+    if (!res.ok) throw new Error(`Failed to list tenants: ${res.statusText}`);
+    const json = await res.json();
+    const data: BackendTenantDTO[] = json.data || [];
+    return data.map(mapBackendTenantToTenantInfo);
+  },
+
   // 1. Products & Inventory
-  async getProducts(tenantId = 1): Promise<Product[]> {
-    const res = await fetch(`${API_BASE_URL}/products?tenant_id=${tenantId}`);
+  async getProducts(tenantId?: number | string): Promise<Product[]> {
+    const tid = tenantId ?? currentTenantId;
+    const res = await fetch(`${API_BASE_URL}/products?tenant_id=${tid}`, {
+      headers: getHeaders({ 'X-Tenant-ID': String(tid) }),
+    });
     if (!res.ok) throw new Error(`Failed to fetch products: ${res.statusText}`);
     const json = await res.json();
     const data: BackendProductDTO[] = json.data || json;
     return data.map(mapBackendProductToProduct);
   },
 
-  async createProduct(product: Omit<Product, 'id' | 'uuid'>, tenantId = 1): Promise<Product> {
+  async createProduct(product: Omit<Product, 'id' | 'uuid'>, tenantId?: number | string): Promise<Product> {
+    const tid = tenantId ?? currentTenantId;
     const res = await fetch(`${API_BASE_URL}/products`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      headers: getHeaders({ 'X-Tenant-ID': String(tid) }),
       body: JSON.stringify({
-        tenant_id: tenantId,
+        tenant_id: tid,
         name: product.name,
         name_urdu: product.nameUrdu || null,
         barcode: product.barcode,
@@ -247,13 +333,14 @@ export const posApi = {
     delta: number,
     type: 'purchase' | 'return' | 'adjustment' | 'damage',
     notes: string,
-    tenantId = 1
+    tenantId?: number | string
   ): Promise<void> {
+    const tid = tenantId ?? currentTenantId;
     const res = await fetch(`${API_BASE_URL}/products/${productId}/adjust-stock`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      headers: getHeaders({ 'X-Tenant-ID': String(tid) }),
       body: JSON.stringify({
-        tenant_id: tenantId,
+        tenant_id: tid,
         quantity: delta,
         type,
         notes,
@@ -263,16 +350,22 @@ export const posApi = {
   },
 
   // 2. Customers & Khata Ledger
-  async getCustomers(tenantId = 1): Promise<Customer[]> {
-    const res = await fetch(`${API_BASE_URL}/customers?tenant_id=${tenantId}`);
+  async getCustomers(tenantId?: number | string): Promise<Customer[]> {
+    const tid = tenantId ?? currentTenantId;
+    const res = await fetch(`${API_BASE_URL}/customers?tenant_id=${tid}`, {
+      headers: getHeaders({ 'X-Tenant-ID': String(tid) }),
+    });
     if (!res.ok) throw new Error(`Failed to fetch customers: ${res.statusText}`);
     const json = await res.json();
     const data: BackendCustomerDTO[] = json.data || json;
     return data.map(mapBackendCustomerToCustomer);
   },
 
-  async getCustomerLedger(customerId: string | number, tenantId = 1): Promise<CustomerLedgerEntry[]> {
-    const res = await fetch(`${API_BASE_URL}/customers/${customerId}/ledger?tenant_id=${tenantId}`);
+  async getCustomerLedger(customerId: string | number, tenantId?: number | string): Promise<CustomerLedgerEntry[]> {
+    const tid = tenantId ?? currentTenantId;
+    const res = await fetch(`${API_BASE_URL}/customers/${customerId}/ledger?tenant_id=${tid}`, {
+      headers: getHeaders({ 'X-Tenant-ID': String(tid) }),
+    });
     if (!res.ok) throw new Error(`Failed to fetch customer ledger: ${res.statusText}`);
     const json = await res.json();
     const data: BackendCustomerLedgerDTO[] = json.data || json;
@@ -283,13 +376,14 @@ export const posApi = {
     customerId: string | number,
     amount: number,
     narration: string,
-    tenantId = 1
+    tenantId?: number | string
   ): Promise<void> {
+    const tid = tenantId ?? currentTenantId;
     const res = await fetch(`${API_BASE_URL}/customers/${customerId}/payment`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      headers: getHeaders({ 'X-Tenant-ID': String(tid) }),
       body: JSON.stringify({
-        tenant_id: tenantId,
+        tenant_id: tid,
         amount,
         narration,
         receipt_no: `REC-${Date.now().toString().slice(-6)}`,
@@ -305,12 +399,13 @@ export const posApi = {
     tenderBreakdown: { cash: number; card: number; khata: number; cash_tendered?: number },
     customerId: string | null,
     discount = 0,
-    tenantId = 1,
+    tenantId?: number | string,
     deviceId = 'REG-01',
     cashierName = 'Hammad Hussain'
   ): Promise<BackendInvoiceDTO> {
+    const tid = tenantId ?? currentTenantId;
     const payload = {
-      tenant_id: tenantId,
+      tenant_id: tid,
       items: items.map((item) => ({
         product_id: parseInt(item.product.id, 10),
         quantity: item.quantity,
@@ -332,7 +427,7 @@ export const posApi = {
 
     const res = await fetch(`${API_BASE_URL}/checkout`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      headers: getHeaders({ 'X-Tenant-ID': String(tid) }),
       body: JSON.stringify(payload),
     });
 
@@ -346,18 +441,24 @@ export const posApi = {
   },
 
   // 4. Invoices & Sales History
-  async getInvoices(tenantId = 1): Promise<Invoice[]> {
-    const res = await fetch(`${API_BASE_URL}/invoices?tenant_id=${tenantId}`);
+  async getInvoices(tenantId?: number | string): Promise<Invoice[]> {
+    const tid = tenantId ?? currentTenantId;
+    const res = await fetch(`${API_BASE_URL}/invoices?tenant_id=${tid}`, {
+      headers: getHeaders({ 'X-Tenant-ID': String(tid) }),
+    });
     if (!res.ok) throw new Error(`Failed to fetch invoices: ${res.statusText}`);
     const json = await res.json();
     const data: BackendInvoiceDTO[] = json.data || json;
-    return data.map((inv) => mapBackendInvoiceToInvoice(inv, tenantId.toString()));
+    return data.map((inv) => mapBackendInvoiceToInvoice(inv, String(tid)));
   },
 
   // 5. Day-End Register Closing Summary
-  async getDayClosingSummary(date?: string, tenantId = 1): Promise<BackendDayClosingSummaryDTO> {
-    const query = date ? `?date=${encodeURIComponent(date)}&tenant_id=${tenantId}` : `?tenant_id=${tenantId}`;
-    const res = await fetch(`${API_BASE_URL}/day-closing${query}`);
+  async getDayClosingSummary(date?: string, tenantId?: number | string): Promise<BackendDayClosingSummaryDTO> {
+    const tid = tenantId ?? currentTenantId;
+    const query = date ? `?date=${encodeURIComponent(date)}&tenant_id=${tid}` : `?tenant_id=${tid}`;
+    const res = await fetch(`${API_BASE_URL}/day-closing${query}`, {
+      headers: getHeaders({ 'X-Tenant-ID': String(tid) }),
+    });
     if (!res.ok) throw new Error(`Failed to fetch day closing summary: ${res.statusText}`);
     const json = await res.json();
     return json.summary;
