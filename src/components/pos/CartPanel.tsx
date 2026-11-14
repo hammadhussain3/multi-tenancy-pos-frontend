@@ -89,7 +89,7 @@ export function CartPanel({
   };
 
   const cartContent = (
-    <div className="flex flex-col h-full max-h-full min-h-0 w-full overflow-hidden select-none bg-white dark:bg-slate-900 transition-colors duration-200">
+    <div className="grid grid-rows-[auto_1fr_auto] h-full max-h-full min-h-0 w-full overflow-hidden select-none bg-white dark:bg-slate-900 transition-colors duration-200">
       {/* 1. Header: Order Bar & Customer Chip */}
       <div className="p-2.5 sm:p-3 border-b border-slate-200/80 dark:border-slate-800 space-y-2 shrink-0 bg-slate-50/70 dark:bg-slate-900/90 backdrop-blur-xs">
         {/* Top Order Row */}
@@ -226,16 +226,16 @@ export function CartPanel({
       </div>
 
       {/* 2. Middle: Cart Items or Compact Engaging Empty State */}
-      <div className="flex-1 min-h-0 overflow-y-auto p-2.5 sm:p-3 space-y-2 divide-y divide-slate-100 dark:divide-slate-800">
+      <div className="min-h-0 overflow-y-auto p-2 sm:p-3 space-y-2 divide-y divide-slate-100 dark:divide-slate-800">
         {cart.length === 0 ? (
-          <div className="min-h-full flex flex-col items-center justify-center text-center p-2 sm:p-3 py-3 sm:py-4">
+          <div className="h-full min-h-0 flex flex-col items-center justify-center text-center p-2 sm:p-3 py-2">
             {/* Visual Icon Badge */}
-            <div className="relative mb-1.5">
-              <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-gradient-to-tr from-indigo-500/10 via-indigo-500/20 to-purple-500/10 dark:from-indigo-500/20 dark:to-purple-500/20 border border-indigo-200/50 dark:border-indigo-800/60 flex items-center justify-center shadow-inner">
-                <ShoppingBag className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+            <div className="relative mb-1">
+              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-gradient-to-tr from-indigo-500/10 via-indigo-500/20 to-purple-500/10 dark:from-indigo-500/20 dark:to-purple-500/20 border border-indigo-200/50 dark:border-indigo-800/60 flex items-center justify-center shadow-inner">
+                <ShoppingBag className="w-4.5 h-4.5 text-indigo-600 dark:text-indigo-400" />
               </div>
-              <div className="absolute -bottom-1 -right-1 w-4.5 h-4.5 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-xs">
-                <Sparkles className="w-2.5 h-2.5" />
+              <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-xs">
+                <Sparkles className="w-2 h-2" />
               </div>
             </div>
 
@@ -250,7 +250,7 @@ export function CartPanel({
             </p>
 
             {/* Quick POS Pro-Tips Card */}
-            <div className="mt-2.5 w-full max-w-[220px] p-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-800 text-[10px] text-left space-y-1 shadow-2xs">
+            <div className="mt-2 w-full max-w-[220px] p-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-800 text-[10px] text-left space-y-1 shadow-2xs">
               <div className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300 font-bold text-[9px] uppercase tracking-wider">
                 <Zap className="w-3 h-3 text-amber-500" />
                 <span>Quick Shortcuts</span>
@@ -354,7 +354,7 @@ export function CartPanel({
       </div>
 
       {/* 3. Footer Summary & Checkout Actions (Sticky & High-Contrast) */}
-      <div className="p-2.5 sm:p-3 border-t border-slate-200/90 dark:border-slate-800 bg-slate-50/95 dark:bg-slate-900/95 backdrop-blur-xs space-y-2 shrink-0 shadow-lg z-10">
+      <div className="p-2 sm:p-2.5 border-t border-slate-200/90 dark:border-slate-800 bg-slate-50/95 dark:bg-slate-900/95 backdrop-blur-xs space-y-1.5 shrink-0 shadow-lg z-10">
         {/* Financial Breakdown */}
         <div className="space-y-1 text-xs">
           <div className="flex justify-between text-slate-600 dark:text-slate-400 text-[11px]">
@@ -380,7 +380,7 @@ export function CartPanel({
           </div>
 
           {/* Grand Total Display Bar */}
-          <div className="pt-1.5 mt-0.5 border-t border-slate-200 dark:border-slate-800 flex justify-between items-baseline">
+          <div className="pt-1 mt-0.5 border-t border-slate-200 dark:border-slate-800 flex justify-between items-baseline">
             <div>
               <div className="text-[9px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
                 {isUrdu ? 'کل رقم' : 'TOTAL PAYABLE'}
@@ -400,7 +400,7 @@ export function CartPanel({
           <button
             onClick={handleQuickCash}
             disabled={cart.length === 0}
-            className={`h-10 sm:h-11 px-2.5 rounded-xl font-black text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-md active:scale-[0.98] ${
+            className={`h-9 sm:h-10 px-2 rounded-xl font-black text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-md active:scale-[0.98] ${
               cart.length > 0
                 ? 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-emerald-600/20'
                 : 'bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-600 opacity-60 cursor-not-allowed shadow-none'
@@ -414,7 +414,7 @@ export function CartPanel({
           <button
             onClick={() => setShowSplitModal(true)}
             disabled={cart.length === 0}
-            className={`h-10 sm:h-11 px-2.5 rounded-xl font-black text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-md active:scale-[0.98] ${
+            className={`h-9 sm:h-10 px-2 rounded-xl font-black text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-md active:scale-[0.98] ${
               cart.length > 0
                 ? 'bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white shadow-indigo-600/20'
                 : 'bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-600 opacity-60 cursor-not-allowed shadow-none'
@@ -629,7 +629,7 @@ export function CartPanel({
   return (
     <>
       {/* Desktop Persistent Cart Panel */}
-      <aside className="hidden lg:flex w-80 xl:w-96 bg-white dark:bg-slate-900 border-l border-slate-200/80 dark:border-slate-800 flex-col shrink-0 h-full max-h-full min-h-0 shadow-xs transition-colors duration-200 overflow-hidden">
+      <aside className="hidden lg:grid grid-rows-1 w-80 xl:w-96 bg-white dark:bg-slate-900 border-l border-slate-200/80 dark:border-slate-800 shrink-0 h-[calc(100dvh-3.5rem)] max-h-[calc(100dvh-3.5rem)] shadow-xs transition-colors duration-200 overflow-hidden">
         {cartContent}
       </aside>
 
