@@ -25,6 +25,36 @@ export function PosProvider({ children }: { children: ReactNode }) {
   const [tenants] = useState<TenantInfo[]>(INITIAL_TENANTS);
   const [currentTenant, setCurrentTenant] = useState<TenantInfo>(INITIAL_TENANTS[0]);
   const [isUrdu, setIsUrdu] = useState<boolean>(false);
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('posify_theme');
+      if (saved === 'dark' || saved === 'light') {
+        if (saved === 'dark') {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+        return saved;
+      }
+    }
+    return 'light';
+  });
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('posify_theme', theme);
+      if (theme === 'dark') {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    }
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
+  };
+
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const [isMobileCartOpen, setIsMobileCartOpen] = useState<boolean>(false);
   const [isOffline, setIsOffline] = useState<boolean>(false);
@@ -335,6 +365,9 @@ export function PosProvider({ children }: { children: ReactNode }) {
         setCurrentTenant,
         isUrdu,
         setIsUrdu,
+        theme,
+        setTheme,
+        toggleTheme,
         isMobileMenuOpen,
         setIsMobileMenuOpen,
         isMobileCartOpen,

@@ -23,10 +23,10 @@ export function ProductCatalog() {
   return (
     <div className="flex-1 overflow-y-auto pr-1">
       {filteredProducts.length === 0 ? (
-        <div className="h-64 flex flex-col items-center justify-center text-slate-500 text-center p-6 bg-white rounded-2xl border border-slate-200 shadow-2xs">
-          <Package className="w-10 h-10 mb-2 stroke-1 text-slate-400" />
-          <div className="text-sm font-semibold text-slate-700">No products found</div>
-          <div className="text-xs text-slate-500 mt-1">
+        <div className="h-64 flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 text-center p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xs">
+          <Package className="w-10 h-10 mb-2 stroke-1 text-slate-400 dark:text-slate-500" />
+          <div className="text-sm font-semibold text-slate-700 dark:text-slate-300">No products found</div>
+          <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">
             Try a different search term, barcode, or category filter.
           </div>
         </div>
@@ -43,24 +43,24 @@ export function ProductCatalog() {
                 disabled={isOutOfStock}
                 className={`text-left p-2.5 sm:p-3 rounded-xl border flex flex-col justify-between transition-all group relative overflow-hidden ${
                   isOutOfStock
-                    ? 'bg-slate-100/60 border-slate-200 opacity-60 cursor-not-allowed'
-                    : 'bg-white hover:bg-slate-50/80 border-slate-200 hover:border-indigo-500/70 hover:shadow-md hover:shadow-indigo-500/5 cursor-pointer active:scale-[0.98]'
+                    ? 'bg-slate-100/60 dark:bg-slate-950/60 border-slate-200 dark:border-slate-800/80 opacity-60 cursor-not-allowed'
+                    : 'bg-white dark:bg-slate-900 hover:bg-slate-50/80 dark:hover:bg-slate-800/80 border-slate-200 dark:border-slate-800 hover:border-indigo-500/70 dark:hover:border-indigo-500 hover:shadow-md hover:shadow-indigo-500/5 cursor-pointer active:scale-[0.98]'
                 }`}
               >
                 {/* Top: Category & Stock Pill */}
                 <div className="flex items-center justify-between gap-1 w-full text-[10px] mb-1.5">
-                  <span className="text-slate-500 font-medium truncate">{product.category}</span>
+                  <span className="text-slate-500 dark:text-slate-400 font-medium truncate">{product.category}</span>
                   {isOutOfStock ? (
-                    <span className="px-1.5 py-0.2 rounded bg-rose-50 text-rose-700 border border-rose-200 font-medium">
+                    <span className="px-1.5 py-0.2 rounded bg-rose-50 dark:bg-rose-950/50 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800/60 font-medium">
                       Out of Stock
                     </span>
                   ) : isLowStock ? (
-                    <span className="px-1.5 py-0.2 rounded bg-amber-50 text-amber-800 border border-amber-200 font-medium flex items-center gap-1">
+                    <span className="px-1.5 py-0.2 rounded bg-amber-50 dark:bg-amber-950/50 text-amber-800 dark:text-amber-400 border border-amber-200 dark:border-amber-800/60 font-medium flex items-center gap-1">
                       <AlertTriangle className="w-2.5 h-2.5" />
                       {product.currentStock} {product.unit}
                     </span>
                   ) : (
-                    <span className="text-emerald-700 font-medium flex items-center gap-0.5">
+                    <span className="text-emerald-700 dark:text-emerald-400 font-medium flex items-center gap-0.5">
                       <CheckCircle2 className="w-2.5 h-2.5" />
                       {product.currentStock} {product.unit}
                     </span>
@@ -69,30 +69,30 @@ export function ProductCatalog() {
 
                 {/* Middle: Name & Barcode */}
                 <div className="my-1">
-                  <div className="text-xs font-bold text-slate-900 group-hover:text-indigo-600 transition-colors line-clamp-2 leading-tight">
+                  <div className="text-xs font-bold text-slate-900 dark:text-slate-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors line-clamp-2 leading-tight">
                     {product.name}
                   </div>
                   {isUrdu && product.nameUrdu && (
-                    <div className="text-[11px] text-amber-800 font-medium mt-0.5">
+                    <div className="text-[11px] text-amber-800 dark:text-amber-400 font-medium mt-0.5">
                       {product.nameUrdu}
                     </div>
                   )}
-                  <div className="text-[10px] text-slate-400 mt-1">
+                  <div className="text-[10px] text-slate-400 dark:text-slate-500 mt-1">
                     {product.barcode}
                   </div>
                 </div>
 
                 {/* Bottom: Price & Add Icon */}
-                <div className="mt-2 pt-2 border-t border-slate-100 flex items-center justify-between w-full">
+                <div className="mt-2 pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between w-full">
                   <div>
-                    <span className="text-[10px] text-slate-500 font-medium">PKR </span>
-                    <span className="text-sm font-extrabold text-slate-900 group-hover:text-indigo-600 transition-colors">
+                    <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">PKR </span>
+                    <span className="text-sm font-extrabold text-slate-900 dark:text-slate-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
                       {product.retailPrice.toLocaleString()}
                     </span>
                   </div>
 
                   {!isOutOfStock && (
-                    <div className="w-6 h-6 rounded-lg bg-indigo-50 group-hover:bg-indigo-600 text-indigo-600 group-hover:text-white flex items-center justify-center transition-all shadow-2xs">
+                    <div className="w-6 h-6 rounded-lg bg-indigo-50 dark:bg-indigo-950/80 group-hover:bg-indigo-600 text-indigo-600 dark:text-indigo-400 group-hover:text-white flex items-center justify-center transition-all shadow-2xs">
                       <Plus className="w-3.5 h-3.5" />
                     </div>
                   )}

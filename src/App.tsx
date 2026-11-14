@@ -74,7 +74,7 @@ function PosDashboard() {
   return (
     <div
       dir={isUrdu ? 'rtl' : 'ltr'}
-      className="h-screen w-screen flex flex-col bg-slate-100 text-slate-900 overflow-hidden"
+      className="h-screen w-screen flex flex-col bg-slate-100 dark:bg-[#0b0f19] text-slate-900 dark:text-slate-100 overflow-hidden transition-colors duration-200"
     >
       {/* Global Multi-Tenant Header */}
       <TopHeader />
@@ -85,29 +85,29 @@ function PosDashboard() {
         <Sidebar />
 
         {/* Dynamic View Container */}
-        <main className="flex-1 flex flex-col overflow-hidden relative bg-slate-100 pb-16 lg:pb-0">
+        <main className="flex-1 flex flex-col overflow-hidden relative bg-slate-100 dark:bg-[#0b0f19] pb-16 lg:pb-0 transition-colors duration-200">
           {activeTab === 'pos' && (
             <div className="flex-1 flex h-full overflow-hidden relative">
               {/* Product Catalog & Search area */}
-              <div className="flex-1 flex flex-col p-2.5 sm:p-4 gap-2.5 sm:gap-3 overflow-hidden bg-slate-100">
+              <div className="flex-1 flex flex-col p-2.5 sm:p-4 gap-2.5 sm:gap-3 overflow-hidden bg-slate-100 dark:bg-[#0b0f19]">
                 <BarcodeSearch />
                 <ProductCatalog />
 
                 {/* Mobile Floating Cart Action Bar */}
                 {cart.length > 0 && (
-                  <div className="lg:hidden shrink-0 p-2.5 bg-white border border-slate-200 rounded-2xl shadow-lg flex items-center justify-between transition-all">
+                  <div className="lg:hidden shrink-0 p-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-lg flex items-center justify-between transition-all">
                     <div className="flex items-center gap-2">
-                      <div className="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-xs relative">
+                      <div className="w-9 h-9 rounded-xl bg-indigo-50 dark:bg-indigo-950/80 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold text-xs relative">
                         <ShoppingCart className="w-4 h-4" />
                         <span className="absolute -top-1 -right-1 px-1.5 py-0.2 rounded-full bg-indigo-600 text-white text-[9px] font-black shadow-xs">
                           {cart.length}
                         </span>
                       </div>
                       <div>
-                        <div className="text-[10px] text-slate-500 font-medium">
+                        <div className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">
                           {cart.reduce((sum, item) => sum + item.quantity, 0)} items selected
                         </div>
-                        <div className="text-sm font-extrabold text-emerald-700">
+                        <div className="text-sm font-extrabold text-emerald-700 dark:text-emerald-400">
                           PKR {cartTotal.toLocaleString()}
                         </div>
                       </div>
@@ -137,7 +137,7 @@ function PosDashboard() {
       </div>
 
       {/* Mobile Bottom Navigation Bar (< lg screens) */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-white border-t border-slate-200 px-1 py-1.5 flex items-center justify-around shadow-lg select-none">
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 px-1 py-1.5 flex items-center justify-around shadow-lg select-none transition-colors duration-200">
         {mobileNavItems.map((item) => {
           const Icon = item.icon;
           const isActive = activeTab === item.id;
@@ -147,12 +147,12 @@ function PosDashboard() {
               onClick={() => setActiveTab(item.id)}
               className={`flex flex-col items-center justify-center flex-1 py-1 px-1 rounded-xl text-[10px] font-semibold transition-all cursor-pointer relative ${
                 isActive
-                  ? 'text-indigo-600 bg-indigo-50/80 font-bold'
-                  : 'text-slate-500 hover:text-slate-900'
+                  ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50/80 dark:bg-indigo-950/60 font-bold'
+                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
               }`}
             >
               <div className="relative">
-                <Icon className={`w-4 h-4 ${isActive ? 'text-indigo-600 stroke-2' : 'text-slate-500'}`} />
+                <Icon className={`w-4 h-4 ${isActive ? 'text-indigo-600 dark:text-indigo-400 stroke-2' : 'text-slate-500 dark:text-slate-400'}`} />
                 {item.badge !== undefined && (
                   <span className="absolute -top-1.5 -right-2 px-1 py-0.2 rounded-full text-[8px] font-black bg-rose-600 text-white min-w-[14px] text-center">
                     {item.badge}

@@ -20,6 +20,10 @@ export interface PosContextType {
   isUrdu: boolean;
   setIsUrdu: React.Dispatch<React.SetStateAction<boolean>>;
 
+  theme: 'light' | 'dark';
+  setTheme: (theme: 'light' | 'dark') => void;
+  toggleTheme: () => void;
+
   isMobileMenuOpen: boolean;
   setIsMobileMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
   isMobileCartOpen: boolean;

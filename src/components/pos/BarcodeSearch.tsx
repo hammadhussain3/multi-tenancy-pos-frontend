@@ -71,7 +71,7 @@ export function BarcodeSearch() {
                   ? 'بارکوڈ اسکین کریں یا نام تلاش کریں...'
                   : 'Scan barcode or search products by name/SKU...'
               }
-              className="w-full pl-9 sm:pl-11 pr-8 sm:pr-10 py-2 sm:py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 placeholder-slate-400 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all shadow-xs"
+              className="w-full pl-9 sm:pl-11 pr-8 sm:pr-10 py-2 sm:py-2.5 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all shadow-xs"
               autoFocus
             />
             {searchQuery && (
@@ -80,7 +80,7 @@ export function BarcodeSearch() {
                   setSearchQuery('');
                   inputRef.current?.focus();
                 }}
-                className="absolute inset-y-0 right-0 pr-2.5 sm:pr-3 flex items-center text-slate-400 hover:text-slate-600 cursor-pointer"
+                className="absolute inset-y-0 right-0 pr-2.5 sm:pr-3 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -127,7 +127,7 @@ export function BarcodeSearch() {
               className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all cursor-pointer ${
                 selectedCategory === cat
                   ? 'bg-indigo-600 text-white shadow-xs font-semibold'
-                  : 'bg-white text-slate-600 hover:text-slate-900 hover:bg-slate-50 border border-slate-200'
+                  : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800'
               }`}
             >
               {cat}

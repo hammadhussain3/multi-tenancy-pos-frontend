@@ -35,24 +35,24 @@ export function DayClosingView() {
   };
 
   return (
-    <div className="flex-1 flex flex-col h-full overflow-y-auto bg-slate-50 p-3 sm:p-6 space-y-4 sm:space-y-6">
+    <div className="flex-1 flex flex-col h-full overflow-y-auto bg-slate-50 dark:bg-[#0b0f19] p-3 sm:p-6 space-y-4 sm:space-y-6 transition-colors">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-200">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-200 dark:border-slate-800">
         <div>
-          <h1 className="text-lg sm:text-xl font-black text-slate-900 flex items-center gap-2">
-            <Calculator className="w-5 h-5 text-indigo-600" />
+          <h1 className="text-lg sm:text-xl font-black text-slate-900 dark:text-slate-100 flex items-center gap-2">
+            <Calculator className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
             <span>Day-End Register Closing & Cash Reconciliation</span>
           </h1>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
             Shift reconciliation report for Register REG-01 ({currentTenant.name} - {currentTenant.branch}).
           </p>
         </div>
 
         <button
           onClick={() => window.print()}
-          className="self-start sm:self-auto px-4 py-2 bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 rounded-xl text-xs font-semibold flex items-center gap-2 transition-colors cursor-pointer shadow-2xs"
+          className="self-start sm:self-auto px-4 py-2 bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 rounded-xl text-xs font-semibold flex items-center gap-2 transition-colors cursor-pointer shadow-2xs"
         >
-          <Printer className="w-4 h-4 text-indigo-600" />
+          <Printer className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
           <span>Print Z-Report</span>
         </button>
       </div>
@@ -60,89 +60,89 @@ export function DayClosingView() {
       {/* Primary KPI Breakdown */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
         {/* Total Sales */}
-        <div className="p-3.5 sm:p-4 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-1">
-          <div className="text-[11px] sm:text-xs font-semibold text-slate-500">Total Gross Sales</div>
-          <div className="text-xl sm:text-2xl font-black text-slate-900">
+        <div className="p-3.5 sm:p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs space-y-1">
+          <div className="text-[11px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400">Total Gross Sales</div>
+          <div className="text-xl sm:text-2xl font-black text-slate-900 dark:text-slate-100">
             PKR {totalSalesRevenue.toLocaleString()}
           </div>
-          <div className="text-[10px] text-slate-400">
+          <div className="text-[10px] text-slate-400 dark:text-slate-500">
             {invoices.length} invoices generated
           </div>
         </div>
 
         {/* Cash Sales */}
-        <div className="p-3.5 sm:p-4 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-1">
-          <div className="text-[11px] sm:text-xs font-semibold text-emerald-700 flex items-center gap-1.5">
+        <div className="p-3.5 sm:p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs space-y-1">
+          <div className="text-[11px] sm:text-xs font-semibold text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5">
             <Banknote className="w-4 h-4" />
             <span>Cash Sales</span>
           </div>
-          <div className="text-xl sm:text-2xl font-black text-emerald-700">
+          <div className="text-xl sm:text-2xl font-black text-emerald-700 dark:text-emerald-400">
             PKR {totalCashSales.toLocaleString()}
           </div>
-          <div className="text-[10px] text-slate-400">Collected in register drawer</div>
+          <div className="text-[10px] text-slate-400 dark:text-slate-500">Collected in register drawer</div>
         </div>
 
         {/* Card Sales */}
-        <div className="p-3.5 sm:p-4 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-1">
-          <div className="text-[11px] sm:text-xs font-semibold text-indigo-700 flex items-center gap-1.5">
+        <div className="p-3.5 sm:p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs space-y-1">
+          <div className="text-[11px] sm:text-xs font-semibold text-indigo-700 dark:text-indigo-400 flex items-center gap-1.5">
             <CreditCard className="w-4 h-4" />
             <span>Card / Bank POS</span>
           </div>
-          <div className="text-xl sm:text-2xl font-black text-indigo-700">
+          <div className="text-xl sm:text-2xl font-black text-indigo-700 dark:text-indigo-400">
             PKR {totalCardSales.toLocaleString()}
           </div>
-          <div className="text-[10px] text-slate-400">Settled to merchant bank account</div>
+          <div className="text-[10px] text-slate-400 dark:text-slate-500">Settled to merchant bank account</div>
         </div>
 
         {/* Khata Credit */}
-        <div className="p-3.5 sm:p-4 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-1">
-          <div className="text-[11px] sm:text-xs font-semibold text-amber-800 flex items-center gap-1.5">
+        <div className="p-3.5 sm:p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs space-y-1">
+          <div className="text-[11px] sm:text-xs font-semibold text-amber-800 dark:text-amber-400 flex items-center gap-1.5">
             <BookOpen className="w-4 h-4" />
             <span>Khata (Udhaar) Sales</span>
           </div>
-          <div className="text-xl sm:text-2xl font-black text-amber-800">
+          <div className="text-xl sm:text-2xl font-black text-amber-800 dark:text-amber-400">
             PKR {totalKhataCredit.toLocaleString()}
           </div>
-          <div className="text-[10px] text-slate-400">Recorded in customer receivables</div>
+          <div className="text-[10px] text-slate-400 dark:text-slate-500">Recorded in customer receivables</div>
         </div>
       </div>
 
       {/* Cash Drawer Reconciliation Box */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-2xs p-4 sm:p-6 space-y-4 sm:space-y-6 max-w-3xl">
-        <div className="border-b border-slate-100 pb-3">
-          <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-            <DollarSign className="w-4 h-4 text-emerald-600" />
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xs p-4 sm:p-6 space-y-4 sm:space-y-6 max-w-3xl">
+        <div className="border-b border-slate-100 dark:border-slate-800 pb-3">
+          <h2 className="text-sm font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+            <DollarSign className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
             <span>Cash Float & Physical Drawer Count</span>
           </h2>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
             Verify actual currency notes inside drawer against system calculations.
           </p>
         </div>
 
         <div className="space-y-3 text-xs">
-          <div className="flex justify-between items-center py-2 border-b border-slate-100 text-slate-700">
+          <div className="flex justify-between items-center py-2 border-b border-slate-100 dark:border-slate-800 text-slate-700 dark:text-slate-300">
             <span>Opening Cash Fund (Float / Change Money):</span>
-            <span className="font-bold text-slate-900">
+            <span className="font-bold text-slate-900 dark:text-slate-100">
               PKR {openingFloat.toLocaleString()}
             </span>
           </div>
 
-          <div className="flex justify-between items-center py-2 border-b border-slate-100 text-slate-700">
+          <div className="flex justify-between items-center py-2 border-b border-slate-100 dark:border-slate-800 text-slate-700 dark:text-slate-300">
             <span>Cash Sales Collected in Shift:</span>
-            <span className="font-bold text-emerald-700">
+            <span className="font-bold text-emerald-700 dark:text-emerald-400">
               + PKR {totalCashSales.toLocaleString()}
             </span>
           </div>
 
-          <div className="flex justify-between items-center py-2.5 border-b border-slate-100 text-sm font-bold text-slate-900 bg-slate-50 px-3 rounded-xl">
+          <div className="flex justify-between items-center py-2.5 border-b border-slate-100 dark:border-slate-800 text-sm font-bold text-slate-900 dark:text-slate-100 bg-slate-50 dark:bg-slate-800/80 px-3 rounded-xl">
             <span>Expected Total Cash in Drawer:</span>
-            <span className="text-emerald-700 font-extrabold">
+            <span className="text-emerald-700 dark:text-emerald-400 font-extrabold">
               PKR {expectedDrawerCash.toLocaleString()}
             </span>
           </div>
 
           <div className="pt-3">
-            <label className="block text-slate-800 font-bold mb-1.5">
+            <label className="block text-slate-800 dark:text-slate-200 font-bold mb-1.5">
               Physical Cash Counted in Drawer (PKR)
             </label>
             <div className="flex flex-col sm:flex-row sm:items-center gap-2.5 sm:gap-3">
@@ -151,12 +151,12 @@ export function DayClosingView() {
                 value={physicalCashCounted || ''}
                 onChange={(e) => setPhysicalCashCounted(parseFloat(e.target.value) || 0)}
                 placeholder="Enter total physical currency count..."
-                className="w-full sm:w-72 px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-base font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-2xs"
+                className="w-full sm:w-72 px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-slate-100 text-base font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-2xs"
               />
               <button
                 type="button"
                 onClick={() => setPhysicalCashCounted(expectedDrawerCash)}
-                className="self-start sm:self-auto px-3 py-2 bg-slate-100 hover:bg-slate-200 text-indigo-700 border border-slate-200 rounded-xl text-xs font-semibold cursor-pointer"
+                className="self-start sm:self-auto px-3 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-indigo-700 dark:text-indigo-400 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold cursor-pointer transition-colors"
               >
                 Match Expected
               </button>
@@ -167,15 +167,15 @@ export function DayClosingView() {
             <div
               className={`p-3 rounded-xl border text-xs flex items-center justify-between ${
                 cashVariance === 0
-                  ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
+                  ? 'bg-emerald-50 dark:bg-emerald-950/60 border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300'
                   : cashVariance > 0
-                  ? 'bg-indigo-50 border-indigo-200 text-indigo-800'
-                  : 'bg-rose-50 border-rose-200 text-rose-800'
+                  ? 'bg-indigo-50 dark:bg-indigo-950/60 border-indigo-200 dark:border-indigo-800 text-indigo-800 dark:text-indigo-300'
+                  : 'bg-rose-50 dark:bg-rose-950/60 border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-300'
               }`}
             >
               <div className="flex items-center gap-2">
                 {cashVariance === 0 ? (
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                 ) : (
                   <AlertCircle className="w-4 h-4" />
                 )}
@@ -195,8 +195,8 @@ export function DayClosingView() {
         </div>
 
         {shiftClosed ? (
-          <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold flex items-center gap-2">
-            <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+          <div className="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs font-semibold flex items-center gap-2">
+            <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
             <span>Shift successfully reconciled and closed for Register REG-01.</span>
           </div>
         ) : (
