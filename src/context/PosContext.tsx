@@ -553,30 +553,78 @@ export function PosProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  // Keyboard Shortcuts for POS
+  // Global Hardware Barcode Scanner Listener & Hotkeys
   useEffect(() => {
+    let barcodeBuffer = '';
+    let lastKeyTime = 0;
+
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Hotkeys
       if (e.key === 'F2') {
         e.preventDefault();
         const searchInput = document.getElementById('barcode-search-input');
         if (searchInput) searchInput.focus();
+        return;
       }
       if (e.key === 'F4') {
         e.preventDefault();
         setPosTerminalMode((prev) => (prev === 'mart' ? 'catalog' : 'mart'));
+        return;
       }
       if (e.key === 'F6') {
         e.preventDefault();
         holdCurrentOrder();
+        return;
       }
       if (e.key === 'F12') {
         e.preventDefault();
         setActiveTab('pos');
+        return;
+      }
+
+      // If user is actively typing in a form input/textarea/select, let that input handle it
+      const targetTag = (e.target as HTMLElement)?.tagName?.toLowerCase();
+      if (targetTag === 'input' || targetTag === 'textarea' || targetTag === 'select') {
+        return;
+      }
+
+      const now = Date.now();
+
+      // Enter key sent at end of hardware laser barcode scan
+      if (e.key === 'Enter') {
+        if (barcodeBuffer.length >= 3) {
+          const scannedCode = barcodeBuffer.trim();
+          barcodeBuffer = '';
+
+          // High-speed lookup by barcode, SKU, or PLU
+          const matched = products.find(
+            (p) =>
+              p.barcode === scannedCode ||
+              p.sku.toLowerCase() === scannedCode.toLowerCase() ||
+              p.sku === `PLU-${scannedCode}`
+          );
+
+          if (matched) {
+            addToCart(matched, 1);
+          }
+        }
+        barcodeBuffer = '';
+        return;
+      }
+
+      // Buffer rapid characters (<200ms keystroke interval typical for hardware scanners)
+      if (e.key && e.key.length === 1) {
+        if (now - lastKeyTime > 500) {
+          barcodeBuffer = '';
+        }
+        barcodeBuffer += e.key;
+        lastKeyTime = now;
       }
     };
+
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [holdCurrentOrder]);
+  }, [holdCurrentOrder, products, addToCart]);
 
   return (
     <PosContext.Provider

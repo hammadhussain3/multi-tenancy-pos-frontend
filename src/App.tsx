@@ -5,6 +5,7 @@ import {
   Package,
   Receipt,
   Calculator,
+  BarChart3,
 } from 'lucide-react';
 import { PosProvider } from './context/PosContext';
 import { usePos } from './context/usePos';
@@ -18,6 +19,7 @@ import { KhataLedgerView } from './components/khata/KhataLedgerView';
 import { InventoryTableView } from './components/inventory/InventoryTableView';
 import { SalesHistoryView } from './components/sales/SalesHistoryView';
 import { DayClosingView } from './components/register/DayClosingView';
+import { ReportsAnalyticsView } from './components/reports/ReportsAnalyticsView';
 import { ThermalReceiptModal } from './components/pos/ThermalReceiptModal';
 import type { ActiveTab } from './types/pos';
 
@@ -72,6 +74,12 @@ function PosDashboard() {
       label: 'Closing',
       labelUrdu: 'حساب',
       icon: Calculator,
+    },
+    {
+      id: 'reports',
+      label: 'Reports',
+      labelUrdu: 'رپورٹس',
+      icon: BarChart3,
     },
   ];
 
@@ -193,6 +201,7 @@ function PosDashboard() {
           {activeTab === 'inventory' && <InventoryTableView />}
           {activeTab === 'sales' && <SalesHistoryView />}
           {activeTab === 'register' && <DayClosingView />}
+          {activeTab === 'reports' && <ReportsAnalyticsView />}
         </main>
       </div>
 

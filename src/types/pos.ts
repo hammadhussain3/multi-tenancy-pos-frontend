@@ -102,7 +102,7 @@ export interface TenantInfo {
   currency: string;
 }
 
-export type ActiveTab = 'pos' | 'inventory' | 'khata' | 'sales' | 'register';
+export type ActiveTab = 'pos' | 'inventory' | 'khata' | 'sales' | 'register' | 'reports';
 
 export type PosTerminalMode = 'mart' | 'catalog';
 

@@ -89,7 +89,7 @@ export function CartPanel({
   };
 
   const cartContent = (
-    <div className="grid grid-rows-[auto_1fr_auto] h-full max-h-full min-h-0 w-full overflow-hidden select-none bg-white dark:bg-slate-900 transition-colors duration-200">
+    <div className="flex flex-col h-full max-h-full min-h-0 w-full overflow-hidden select-none bg-white dark:bg-slate-900 transition-colors duration-200">
       {/* 1. Header: Order Bar & Customer Chip */}
       <div className="p-2.5 sm:p-3 border-b border-slate-200/80 dark:border-slate-800 space-y-2 shrink-0 bg-slate-50/70 dark:bg-slate-900/90 backdrop-blur-xs">
         {/* Top Order Row */}
@@ -226,7 +226,7 @@ export function CartPanel({
       </div>
 
       {/* 2. Middle: Cart Items or Compact Engaging Empty State */}
-      <div className="min-h-0 overflow-y-auto p-2 sm:p-3 space-y-2 divide-y divide-slate-100 dark:divide-slate-800">
+      <div className="flex-1 min-h-0 overflow-y-auto p-2.5 sm:p-3 space-y-2 divide-y divide-slate-100 dark:divide-slate-800">
         {cart.length === 0 ? (
           <div className="h-full min-h-0 flex flex-col items-center justify-center text-center p-2 sm:p-3 py-2">
             {/* Visual Icon Badge */}
@@ -354,7 +354,7 @@ export function CartPanel({
       </div>
 
       {/* 3. Footer Summary & Checkout Actions (Sticky & High-Contrast) */}
-      <div className="p-2 sm:p-2.5 border-t border-slate-200/90 dark:border-slate-800 bg-slate-50/95 dark:bg-slate-900/95 backdrop-blur-xs space-y-1.5 shrink-0 shadow-lg z-10">
+      <div className="p-2.5 sm:p-3 border-t border-slate-200/90 dark:border-slate-800 bg-slate-50/95 dark:bg-slate-900/95 backdrop-blur-xs space-y-2 shrink-0 mt-auto shadow-lg z-10">
         {/* Financial Breakdown */}
         <div className="space-y-1 text-xs">
           <div className="flex justify-between text-slate-600 dark:text-slate-400 text-[11px]">
@@ -629,7 +629,7 @@ export function CartPanel({
   return (
     <>
       {/* Desktop Persistent Cart Panel */}
-      <aside className="hidden lg:grid grid-rows-1 w-80 xl:w-96 bg-white dark:bg-slate-900 border-l border-slate-200/80 dark:border-slate-800 shrink-0 h-[calc(100dvh-3.5rem)] max-h-[calc(100dvh-3.5rem)] shadow-xs transition-colors duration-200 overflow-hidden">
+      <aside className="hidden lg:flex flex-col w-80 xl:w-96 bg-white dark:bg-slate-900 border-l border-slate-200/80 dark:border-slate-800 shrink-0 h-full max-h-full min-h-0 shadow-xs transition-colors duration-200 overflow-hidden">
         {cartContent}
       </aside>
 

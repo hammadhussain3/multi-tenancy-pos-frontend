@@ -21,6 +21,7 @@ export function BarcodeSearch() {
 
   const inputRef = useRef<HTMLInputElement>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [unregisteredBarcode, setUnregisteredBarcode] = useState('');
 
   // High-performance O(1) Hash Map index for 10,000+ Mart inventory scale
   const { barcodeMap, skuMap } = useMemo(() => {
@@ -71,6 +72,14 @@ export function BarcodeSearch() {
       if (partialMatch) {
         addToCart(partialMatch, qty);
         setSearchQuery('');
+        return;
+      }
+
+      // Barcode not in catalog: prompt quick product registration
+      if (target.length >= 3) {
+        setUnregisteredBarcode(target);
+        setIsAddModalOpen(true);
+        setSearchQuery('');
       }
     }
   };
@@ -102,6 +111,13 @@ export function BarcodeSearch() {
     );
     if (found) {
       addToCart(found, qty);
+      setSearchQuery('');
+      return;
+    }
+
+    if (target.length >= 3) {
+      setUnregisteredBarcode(target);
+      setIsAddModalOpen(true);
       setSearchQuery('');
     }
   };
@@ -228,7 +244,18 @@ export function BarcodeSearch() {
       </div>
 
       {/* Quick Add Modal */}
-      {isAddModalOpen && <ProductModal onClose={() => setIsAddModalOpen(false)} />}
+      {isAddModalOpen && (
+        <ProductModal
+          initialBarcode={unregisteredBarcode}
+          onClose={() => {
+            setIsAddModalOpen(false);
+            setUnregisteredBarcode('');
+          }}
+          onProductCreated={(newProd) => {
+            addToCart(newProd, 1);
+          }}
+        />
+      )}
     </>
   );
 }

@@ -4,6 +4,7 @@ import {
   Package,
   Receipt,
   Calculator,
+  BarChart3,
   Store,
   Layers,
   ChevronRight,
@@ -59,6 +60,12 @@ export function Sidebar() {
       label: 'Day Closing & Cash',
       labelUrdu: 'دن کا حساب اور کیش',
       icon: Calculator,
+    },
+    {
+      id: 'reports',
+      label: 'Reports & Analytics',
+      labelUrdu: 'رپورٹس اور تجزیہ',
+      icon: BarChart3,
     },
   ];
 
