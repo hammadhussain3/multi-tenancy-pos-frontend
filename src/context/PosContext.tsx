@@ -183,23 +183,31 @@ export function PosProvider({ children }: { children: ReactNode }) {
         const tid = parseInt(currentTenant.id, 10) || 1;
         posApi.setActiveTenantId(tid);
 
-        const [liveTenants, liveProducts, liveCustomers, liveInvoices] = await Promise.all([
-          posApi.getTenants().catch(() => INITIAL_TENANTS),
-          posApi.getProducts(tid),
-          posApi.getCustomers(tid),
-          posApi.getInvoices(tid),
-        ]);
-
-        if (isMounted) {
-          if (liveTenants && liveTenants.length > 0) setTenants(liveTenants);
-          if (liveProducts.length > 0) setProducts(liveProducts);
-          if (liveCustomers.length > 0) setCustomers(liveCustomers);
-          if (liveInvoices.length > 0) setInvoices(liveInvoices);
-          setIsOffline(false);
-          setPendingSyncCount(0);
+        // Always fetch available tenants (public route)
+        const liveTenants = await posApi.getTenants().catch(() => INITIAL_TENANTS);
+        if (isMounted && liveTenants && liveTenants.length > 0) {
+          setTenants(liveTenants);
         }
-      } catch {
-        // Fallback to local offline state if backend not reached
+
+        // Only fetch authenticated store data if active Sanctum token exists
+        const token = posApi.getAuthToken();
+        if (token) {
+          const [liveProducts, liveCustomers, liveInvoices] = await Promise.all([
+            posApi.getProducts(tid),
+            posApi.getCustomers(tid),
+            posApi.getInvoices(tid),
+          ]);
+
+          if (isMounted) {
+            if (liveProducts.length > 0) setProducts(liveProducts);
+            if (liveCustomers.length > 0) setCustomers(liveCustomers);
+            if (liveInvoices.length > 0) setInvoices(liveInvoices);
+            setIsOffline(false);
+            setPendingSyncCount(0);
+          }
+        }
+      } catch (err) {
+        console.warn('Backend hydration notice:', err);
         if (isMounted) {
           setIsOffline(true);
         }
@@ -209,7 +217,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
     return () => {
       isMounted = false;
     };
-  }, [currentTenant.id]);
+  }, [currentTenant.id, authUser?.id]);
 
   // Derive Categories
   const categories = ['All', ...Array.from(new Set(products.map((p) => p.category)))];
@@ -515,7 +523,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
       date: new Date().toISOString().replace('T', ' ').substring(0, 19),
       tenantId: currentTenant.id,
       deviceId: 'REG-01',
-      cashierName: 'Hammad Hussain',
+      cashierName: authUser?.name || 'Cashier',
       customer: selectedCustomer || undefined,
       items: [...cart],
       subtotal: cartSubtotal,
@@ -591,8 +599,34 @@ export function PosProvider({ children }: { children: ReactNode }) {
           cartDiscount,
           parseInt(currentTenant.id, 10) || 1,
           'REG-01',
-          'Hammad Hussain'
+          authUser?.name || 'Cashier'
         )
+        .then((backendInv) => {
+          if (backendInv?.invoice_no) {
+            setInvoices((prev) =>
+              prev.map((inv) =>
+                inv.id === newInvoice.id
+                  ? {
+                      ...inv,
+                      invoiceNo: backendInv.invoice_no,
+                      fbrInvoiceNo: backendInv.fbr_invoice_no || inv.fbrInvoiceNo,
+                      isSynced: true,
+                    }
+                  : inv
+              )
+            );
+            setActiveReceipt((curr) =>
+              curr?.id === newInvoice.id
+                ? {
+                    ...curr,
+                    invoiceNo: backendInv.invoice_no,
+                    fbrInvoiceNo: backendInv.fbr_invoice_no || curr.fbrInvoiceNo,
+                    isSynced: true,
+                  }
+                : curr
+            );
+          }
+        })
         .catch((err) => {
           console.warn('Backend sync failed, queued for offline sync:', err);
           setIsOffline(true);
