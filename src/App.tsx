@@ -12,6 +12,7 @@ import { TopHeader } from './components/layout/TopHeader';
 import { Sidebar } from './components/layout/Sidebar';
 import { BarcodeSearch } from './components/pos/BarcodeSearch';
 import { ProductCatalog } from './components/pos/ProductCatalog';
+import { RapidMartView } from './components/pos/RapidMartView';
 import { CartPanel } from './components/pos/CartPanel';
 import { KhataLedgerView } from './components/khata/KhataLedgerView';
 import { InventoryTableView } from './components/inventory/InventoryTableView';
@@ -24,6 +25,7 @@ function PosDashboard() {
   const {
     activeTab,
     setActiveTab,
+    posTerminalMode,
     activeReceipt,
     setActiveReceipt,
     isUrdu,
@@ -135,7 +137,11 @@ function PosDashboard() {
                 }`}
               >
                 <BarcodeSearch />
-                <ProductCatalog />
+                {posTerminalMode === 'mart' ? (
+                  <RapidMartView />
+                ) : (
+                  <ProductCatalog />
+                )}
 
                 {/* Mobile Floating Cart Action Bar */}
                 {cart.length > 0 && mobilePosView === 'catalog' && (

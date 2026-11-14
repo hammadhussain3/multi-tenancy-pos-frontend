@@ -6,15 +6,24 @@ import { usePos } from '../../context/usePos';
 
 interface ProductModalProps {
   product?: Product;
+  initialBarcode?: string;
   onClose: () => void;
+  onProductCreated?: (product: Product) => void;
 }
 
-export function ProductModal({ product, onClose }: ProductModalProps) {
+export function ProductModal({
+  product,
+  initialBarcode,
+  onClose,
+  onProductCreated,
+}: ProductModalProps) {
   const { addProduct, updateProduct, categories } = usePos();
 
   const [name, setName] = useState(product?.name || '');
   const [nameUrdu, setNameUrdu] = useState(product?.nameUrdu || '');
-  const [barcode, setBarcode] = useState(() => product?.barcode || `8964${Math.floor(100000000 + Math.random() * 900000000)}`);
+  const [barcode, setBarcode] = useState(
+    () => initialBarcode || product?.barcode || `8964${Math.floor(100000000 + Math.random() * 900000000)}`
+  );
   const [sku, setSku] = useState(product?.sku || '');
   const [category, setCategory] = useState(product?.category || 'Grocery');
   const [unit, setUnit] = useState<ProductUnit>(product?.unit || 'pcs');
@@ -45,7 +54,7 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
         minStockAlert,
       });
     } else {
-      addProduct({
+      const payload = {
         name,
         nameUrdu: nameUrdu || undefined,
         barcode,
@@ -58,7 +67,15 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
         minStockAlert,
         taxRate: 0,
         isActive: true,
-      });
+      };
+      addProduct(payload);
+      if (onProductCreated) {
+        onProductCreated({
+          ...payload,
+          id: `prod-${Date.now()}`,
+          uuid: `018f8b70-1111-7000-8000-${Date.now().toString().slice(-12)}`,
+        });
+      }
     }
 
     onClose();

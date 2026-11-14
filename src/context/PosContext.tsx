@@ -11,6 +11,7 @@ import type {
   PaymentMethod,
   Product,
   TenantInfo,
+  PosTerminalMode,
 } from '../types/pos';
 import {
   INITIAL_CUSTOMERS,
@@ -24,6 +25,27 @@ import { PosContext } from './posContextDefinition';
 export function PosProvider({ children }: { children: ReactNode }) {
   // System State
   const [activeTab, setActiveTab] = useState<ActiveTab>('pos');
+  const [posTerminalMode, setPosTerminalMode] = useState<PosTerminalMode>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('posify_terminal_mode');
+      if (saved === 'mart' || saved === 'catalog') return saved;
+    }
+    return 'mart';
+  });
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('posify_terminal_mode', posTerminalMode);
+    }
+  }, [posTerminalMode]);
+
+  const [lastScannedItem, setLastScannedItem] = useState<{
+    name: string;
+    quantity: number;
+    total: number;
+    timestamp: number;
+  } | null>(null);
+
   const [tenants] = useState<TenantInfo[]>(INITIAL_TENANTS);
   const [currentTenant, setCurrentTenant] = useState<TenantInfo>(INITIAL_TENANTS[0]);
   const [isUrdu, setIsUrdu] = useState<boolean>(false);
@@ -121,11 +143,42 @@ export function PosProvider({ children }: { children: ReactNode }) {
   const cartTax = 0; // Tax free or standard FBR rate
   const cartTotal = Math.max(0, cartSubtotal - cartDiscount + cartTax);
 
-  const addToCart = (product: Product, quantity = 1) => {
+  const playBeep = useCallback(() => {
+    try {
+      if (typeof window !== 'undefined') {
+        const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+        if (AudioCtx) {
+          const audioCtx = new AudioCtx();
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(1400, audioCtx.currentTime);
+          gain.gain.setValueAtTime(0.06, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.05);
+        }
+      }
+    } catch {
+      // AudioContext policy: gracefully continue
+    }
+  }, []);
+
+  const addToCart = useCallback((product: Product, quantity = 1) => {
     if (product.currentStock <= 0) {
       alert(`"${product.name}" is currently Out of Stock.`);
       return;
     }
+
+    playBeep();
+    setLastScannedItem({
+      name: product.name,
+      quantity,
+      total: quantity * product.retailPrice,
+      timestamp: Date.now(),
+    });
 
     setCart((prev) => {
       const existing = prev.find((item) => item.product.id === product.id);
@@ -156,7 +209,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
         },
       ];
     });
-  };
+  }, [playBeep]);
 
   const updateQuantity = (productId: string, quantity: number) => {
     if (quantity <= 0) {
@@ -508,6 +561,10 @@ export function PosProvider({ children }: { children: ReactNode }) {
         const searchInput = document.getElementById('barcode-search-input');
         if (searchInput) searchInput.focus();
       }
+      if (e.key === 'F4') {
+        e.preventDefault();
+        setPosTerminalMode((prev) => (prev === 'mart' ? 'catalog' : 'mart'));
+      }
       if (e.key === 'F6') {
         e.preventDefault();
         holdCurrentOrder();
@@ -526,6 +583,9 @@ export function PosProvider({ children }: { children: ReactNode }) {
       value={{
         activeTab,
         setActiveTab,
+        posTerminalMode,
+        setPosTerminalMode,
+        lastScannedItem,
         tenants,
         currentTenant,
         setCurrentTenant,

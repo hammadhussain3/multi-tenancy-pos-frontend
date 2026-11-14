@@ -1,6 +1,6 @@
 import { useRef, useState, useMemo } from 'react';
 import type { KeyboardEvent } from 'react';
-import { Search, Barcode, X, Plus } from 'lucide-react';
+import { Search, Barcode, X, Plus, Zap, LayoutGrid } from 'lucide-react';
 import { usePos } from '../../context/usePos';
 import { ProductModal } from '../inventory/ProductModal';
 import type { Product } from '../../types/pos';
@@ -14,6 +14,8 @@ export function BarcodeSearch() {
     categories,
     selectedCategory,
     setSelectedCategory,
+    posTerminalMode,
+    setPosTerminalMode,
     isUrdu,
   } = usePos();
 
@@ -36,31 +38,71 @@ export function BarcodeSearch() {
       const trimmed = searchQuery.trim();
       if (!trimmed) return;
 
+      // Supermarket Multiplier Parsing: 5*8964000123456 or 12*101
+      let target = trimmed;
+      let qty = 1;
+      const multiplierMatch = trimmed.match(/^(\d+(?:\.\d+)?)\s*[*xX]\s*(.+)$/);
+      if (multiplierMatch) {
+        qty = Math.max(1, parseFloat(multiplierMatch[1]));
+        target = multiplierMatch[2].trim();
+      }
+
       // O(1) Instant Barcode Scanner Lookup (<0.05ms)
-      const exactBarcode = barcodeMap.get(trimmed);
+      const exactBarcode = barcodeMap.get(target);
       if (exactBarcode) {
-        addToCart(exactBarcode, 1);
+        addToCart(exactBarcode, qty);
         setSearchQuery('');
         return;
       }
 
       // O(1) Instant SKU Lookup (<0.05ms)
-      const exactSku = skuMap.get(trimmed.toLowerCase());
+      const exactSku = skuMap.get(target.toLowerCase());
       if (exactSku) {
-        addToCart(exactSku, 1);
+        addToCart(exactSku, qty);
         setSearchQuery('');
         return;
       }
 
       const partialMatch = products.find(
         (p) =>
-          p.name.toLowerCase().includes(trimmed.toLowerCase()) ||
-          p.barcode.includes(trimmed)
+          p.name.toLowerCase().includes(target.toLowerCase()) ||
+          p.barcode.includes(target)
       );
       if (partialMatch) {
-        addToCart(partialMatch, 1);
+        addToCart(partialMatch, qty);
         setSearchQuery('');
       }
+    }
+  };
+
+  const handleManualAdd = () => {
+    const trimmed = searchQuery.trim();
+    if (!trimmed) return;
+
+    let target = trimmed;
+    let qty = 1;
+    const multiplierMatch = trimmed.match(/^(\d+(?:\.\d+)?)\s*[*xX]\s*(.+)$/);
+    if (multiplierMatch) {
+      qty = Math.max(1, parseFloat(multiplierMatch[1]));
+      target = multiplierMatch[2].trim();
+    }
+
+    const exactBarcode = barcodeMap.get(target);
+    if (exactBarcode) {
+      addToCart(exactBarcode, qty);
+      setSearchQuery('');
+      return;
+    }
+
+    const found = products.find(
+      (p) =>
+        p.barcode === target ||
+        p.sku.toLowerCase() === target.toLowerCase() ||
+        p.name.toLowerCase().includes(target.toLowerCase())
+    );
+    if (found) {
+      addToCart(found, qty);
+      setSearchQuery('');
     }
   };
 
@@ -81,7 +123,11 @@ export function BarcodeSearch() {
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder={
-                isUrdu
+                posTerminalMode === 'mart'
+                  ? isUrdu
+                    ? 'بارکوڈ اسکین کریں یا مقدار*کوڈ (مثال: 12*Milk یا 101)...'
+                    : 'Scan barcode or type multiplier*code (e.g. 12*Milk or 101 for Bag)...'
+                  : isUrdu
                   ? 'بارکوڈ اسکین کریں یا نام تلاش کریں...'
                   : 'Scan barcode or search products by name/SKU...'
               }
@@ -102,23 +148,12 @@ export function BarcodeSearch() {
           </div>
 
           <button
-            onClick={() => {
-              const trimmed = searchQuery.trim();
-              const found = products.find(
-                (p) =>
-                  p.barcode === trimmed ||
-                  p.name.toLowerCase().includes(trimmed.toLowerCase())
-              );
-              if (found) {
-                addToCart(found, 1);
-                setSearchQuery('');
-              }
-            }}
+            onClick={handleManualAdd}
             className="px-2.5 sm:px-4 py-2 sm:py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-xs cursor-pointer shrink-0"
             title="Search and add"
           >
             <Search className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">{isUrdu ? 'تلاش' : 'Search / Add'}</span>
+            <span className="hidden sm:inline">{isUrdu ? 'تلاش / شامل' : 'Search / Add'}</span>
           </button>
 
           {/* Quick Add Product Button directly from POS screen */}
@@ -132,21 +167,63 @@ export function BarcodeSearch() {
           </button>
         </div>
 
-        {/* Category Filter Pills */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none text-xs">
-          {categories.map((cat) => (
+        {/* Mart Terminal Mode Switcher & Filter Pills */}
+        <div className="flex items-center justify-between gap-2 overflow-x-auto pb-0.5">
+          {/* Dual Operating Mode Switcher */}
+          <div className="flex items-center p-0.5 bg-slate-200/80 dark:bg-slate-800 rounded-xl shrink-0">
             <button
-              key={cat}
-              onClick={() => setSelectedCategory(cat)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all cursor-pointer ${
-                selectedCategory === cat
-                  ? 'bg-indigo-600 text-white shadow-xs font-semibold'
-                  : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800'
+              onClick={() => setPosTerminalMode('mart')}
+              className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                posTerminalMode === 'mart'
+                  ? 'bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-xs'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
               }`}
+              title="Supermarket Barcode & PLU Fast-Movers Terminal (F4)"
             >
-              {cat}
+              <Zap className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
+              <span>{isUrdu ? 'ریپڈ مارٹ موڈ' : 'Rapid Mart Mode'}</span>
+              <kbd className="hidden sm:inline text-[9px] px-1 rounded bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-mono">
+                F4
+              </kbd>
             </button>
-          ))}
+
+            <button
+              onClick={() => setPosTerminalMode('catalog')}
+              className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                posTerminalMode === 'catalog'
+                  ? 'bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-xs'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
+              }`}
+              title="Visual Card Catalog Grid"
+            >
+              <LayoutGrid className="w-3.5 h-3.5" />
+              <span>{isUrdu ? 'کیٹلاگ گرڈ' : 'Catalog Grid'}</span>
+            </button>
+          </div>
+
+          {/* Category Filter Pills (Shown in Catalog Grid Mode) */}
+          {posTerminalMode === 'catalog' ? (
+            <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none text-xs">
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setSelectedCategory(cat)}
+                  className={`px-3 py-1 rounded-lg text-xs font-medium whitespace-nowrap transition-all cursor-pointer ${
+                    selectedCategory === cat
+                      ? 'bg-indigo-600 text-white shadow-xs font-semibold'
+                      : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800'
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+          ) : (
+            <div className="hidden sm:flex items-center gap-1.5 text-[11px] text-slate-500 dark:text-slate-400 font-medium">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span>{isUrdu ? 'تیز رفتار بارکوڈ اسکینر فعال ہے' : 'High-Speed Omni Scanner Active'}</span>
+            </div>
+          )}
         </div>
       </div>
 

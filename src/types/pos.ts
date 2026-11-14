@@ -104,3 +104,5 @@ export interface TenantInfo {
 
 export type ActiveTab = 'pos' | 'inventory' | 'khata' | 'sales' | 'register';
 
+export type PosTerminalMode = 'mart' | 'catalog';
+

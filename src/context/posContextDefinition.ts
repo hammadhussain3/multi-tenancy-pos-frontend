@@ -10,11 +10,15 @@ import type {
   PaymentMethod,
   Product,
   TenantInfo,
+  PosTerminalMode,
 } from '../types/pos';
 
 export interface PosContextType {
   activeTab: ActiveTab;
   setActiveTab: (tab: ActiveTab) => void;
+  posTerminalMode: PosTerminalMode;
+  setPosTerminalMode: (mode: PosTerminalMode) => void;
+  lastScannedItem: { name: string; quantity: number; total: number; timestamp: number } | null;
   tenants: TenantInfo[];
   currentTenant: TenantInfo;
   setCurrentTenant: (tenant: TenantInfo) => void;
