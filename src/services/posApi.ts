@@ -359,6 +359,22 @@ export const posApi = {
         setAuthToken(null);
       }
     },
+
+    getAuthToken(): string | null {
+      return getAuthToken();
+    },
+
+    setAuthToken(token: string | null) {
+      setAuthToken(token);
+    },
+  },
+
+  getAuthToken(): string | null {
+    return getAuthToken();
+  },
+
+  setAuthToken(token: string | null) {
+    setAuthToken(token);
   },
 
   // Multi-Tenancy
