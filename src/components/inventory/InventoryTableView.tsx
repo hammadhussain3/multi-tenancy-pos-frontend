@@ -60,11 +60,11 @@ export function InventoryTableView() {
   };
 
   return (
-    <div className="flex-1 flex flex-col h-full overflow-hidden bg-slate-50 p-4 gap-4">
+    <div className="flex-1 flex flex-col h-full overflow-hidden bg-slate-50 p-2.5 sm:p-4 gap-2.5 sm:gap-4">
       {/* Top Header & Metrics */}
-      <div className="flex items-center justify-between shrink-0">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 shrink-0">
         <div>
-          <h1 className="text-lg font-black text-slate-900 flex items-center gap-2">
+          <h1 className="text-base sm:text-lg font-black text-slate-900 flex items-center gap-2">
             <Boxes className="w-5 h-5 text-indigo-600" />
             <span>Retail Products & Inventory Ledger</span>
           </h1>
@@ -75,7 +75,7 @@ export function InventoryTableView() {
 
         <button
           onClick={() => setIsAddModalOpen(true)}
-          className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-xs transition-all active:scale-[0.98] cursor-pointer"
+          className="self-start sm:self-auto px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-xs transition-all active:scale-[0.98] cursor-pointer"
         >
           <Plus className="w-4 h-4" />
           <span>Add New Product</span>
@@ -83,38 +83,38 @@ export function InventoryTableView() {
       </div>
 
       {/* Summary KPI Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 shrink-0">
-        <div className="p-3.5 rounded-2xl bg-white border border-slate-200 shadow-2xs">
-          <div className="text-[11px] font-semibold text-slate-500">Total Catalog Items</div>
-          <div className="text-xl font-black text-slate-900 mt-1">{products.length} SKUs</div>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3 shrink-0">
+        <div className="p-3 sm:p-3.5 rounded-2xl bg-white border border-slate-200 shadow-2xs">
+          <div className="text-[10px] sm:text-[11px] font-semibold text-slate-500">Total Catalog Items</div>
+          <div className="text-lg sm:text-xl font-black text-slate-900 mt-1">{products.length} SKUs</div>
         </div>
-        <div className="p-3.5 rounded-2xl bg-white border border-slate-200 shadow-2xs">
-          <div className="text-[11px] font-semibold text-slate-500">Inventory Retail Valuation</div>
-          <div className="text-xl font-black text-emerald-700 mt-1">
+        <div className="p-3 sm:p-3.5 rounded-2xl bg-white border border-slate-200 shadow-2xs">
+          <div className="text-[10px] sm:text-[11px] font-semibold text-slate-500">Inventory Retail Valuation</div>
+          <div className="text-lg sm:text-xl font-black text-emerald-700 mt-1">
             PKR {totalStockValueRetail.toLocaleString()}
           </div>
           <div className="text-[10px] text-slate-500 mt-0.5">
             Cost: PKR {totalStockValueCost.toLocaleString()}
           </div>
         </div>
-        <div className="p-3.5 rounded-2xl bg-white border border-slate-200 shadow-2xs">
-          <div className="text-[11px] font-semibold text-slate-500">Low Stock Warnings</div>
-          <div className="text-xl font-black text-amber-800 mt-1 flex items-center gap-1.5">
+        <div className="p-3 sm:p-3.5 rounded-2xl bg-white border border-slate-200 shadow-2xs">
+          <div className="text-[10px] sm:text-[11px] font-semibold text-slate-500">Low Stock Warnings</div>
+          <div className="text-lg sm:text-xl font-black text-amber-800 mt-1 flex items-center gap-1.5">
             <AlertTriangle className="w-4 h-4 text-amber-600" />
             {lowStockCount} Products
           </div>
         </div>
-        <div className="p-3.5 rounded-2xl bg-white border border-slate-200 shadow-2xs">
-          <div className="text-[11px] font-semibold text-slate-500">Out of Stock</div>
-          <div className="text-xl font-black text-rose-700 mt-1">
+        <div className="p-3 sm:p-3.5 rounded-2xl bg-white border border-slate-200 shadow-2xs">
+          <div className="text-[10px] sm:text-[11px] font-semibold text-slate-500">Out of Stock</div>
+          <div className="text-lg sm:text-xl font-black text-rose-700 mt-1">
             {outOfStockCount} Products
           </div>
         </div>
       </div>
 
       {/* Table Filter Controls */}
-      <div className="p-3 rounded-2xl bg-white border border-slate-200 shadow-2xs flex flex-wrap items-center justify-between gap-3 shrink-0">
-        <div className="flex items-center gap-2 flex-1 min-w-[280px]">
+      <div className="p-3 rounded-2xl bg-white border border-slate-200 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 shrink-0">
+        <div className="flex items-center gap-2 flex-1 w-full sm:w-auto">
           <div className="relative flex-1">
             <Search className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" />
             <input
@@ -140,7 +140,7 @@ export function InventoryTableView() {
         </div>
 
         {/* Stock Filter Pills */}
-        <div className="flex items-center gap-1.5 text-xs">
+        <div className="flex items-center gap-1.5 text-xs overflow-x-auto pb-0.5">
           <button
             onClick={() => setStockFilter('all')}
             className={`px-2.5 py-1 rounded-lg font-medium transition-colors cursor-pointer ${
@@ -177,7 +177,7 @@ export function InventoryTableView() {
       {/* Main Data Table */}
       <div className="flex-1 bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden flex flex-col">
         <div className="flex-1 overflow-auto">
-          <table className="w-full text-left text-xs border-collapse">
+          <table className="w-full text-left text-xs border-collapse min-w-[760px]">
             <thead className="bg-slate-50 text-slate-600 uppercase text-[10px] font-semibold sticky top-0 z-10 border-b border-slate-200 backdrop-blur-xs">
               <tr>
                 <th className="py-2.5 px-3">Product Name & Barcode</th>
@@ -310,7 +310,7 @@ export function InventoryTableView() {
       {/* Stock Adjustment Modal */}
       {adjustingProduct && (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center z-50 p-4">
-          <div className="bg-white border border-slate-200 rounded-3xl w-full max-w-md p-6 shadow-2xl space-y-4">
+          <div className="bg-white border border-slate-200 rounded-3xl w-full max-w-md p-4 sm:p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <div className="font-extrabold text-slate-900 text-sm flex items-center gap-2">
                 <ArrowUpDown className="w-4 h-4 text-indigo-600" />

@@ -7,12 +7,20 @@ import {
   Store,
   Layers,
   ChevronRight,
+  X,
 } from 'lucide-react';
 import { usePos } from '../../context/usePos';
 import type { ActiveTab } from '../../types/pos';
 
 export function Sidebar() {
-  const { activeTab, setActiveTab, cart, isUrdu } = usePos();
+  const {
+    activeTab,
+    setActiveTab,
+    cart,
+    isUrdu,
+    isMobileMenuOpen,
+    setIsMobileMenuOpen,
+  } = usePos();
 
   const navItems: {
     id: ActiveTab;
@@ -54,23 +62,39 @@ export function Sidebar() {
     },
   ];
 
-  return (
-    <aside className="w-64 bg-white border-r border-slate-200 flex flex-col justify-between shrink-0 select-none shadow-xs">
+  const handleNavClick = (tabId: ActiveTab) => {
+    setActiveTab(tabId);
+    setIsMobileMenuOpen(false);
+  };
+
+  const navContent = (
+    <>
       <div>
         {/* Brand Banner */}
-        <div className="h-14 px-4 border-b border-slate-200 flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center shadow-xs">
-            <Store className="w-4 h-4 text-white" />
-          </div>
-          <div>
-            <div className="font-extrabold text-sm text-slate-900 tracking-tight flex items-center gap-1.5">
-              <span>POSify</span>
-              <span className="px-1.5 py-0.2 rounded text-[9px] bg-indigo-50 text-indigo-700 border border-indigo-200 font-bold">
-                PRO
-              </span>
+        <div className="h-14 px-4 border-b border-slate-200 flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center shadow-xs">
+              <Store className="w-4 h-4 text-white" />
             </div>
-            <div className="text-[10px] text-slate-500 font-medium">Hybrid Retail POS</div>
+            <div>
+              <div className="font-extrabold text-sm text-slate-900 tracking-tight flex items-center gap-1.5">
+                <span>POSify</span>
+                <span className="px-1.5 py-0.2 rounded text-[9px] bg-indigo-50 text-indigo-700 border border-indigo-200 font-bold">
+                  PRO
+                </span>
+              </div>
+              <div className="text-[10px] text-slate-500 font-medium">Hybrid Retail POS</div>
+            </div>
           </div>
+
+          {/* Close button on mobile */}
+          <button
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="lg:hidden p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 cursor-pointer"
+            title="Close menu"
+          >
+            <X className="w-5 h-5" />
+          </button>
         </div>
 
         {/* Section Label */}
@@ -87,7 +111,7 @@ export function Sidebar() {
             return (
               <button
                 key={item.id}
-                onClick={() => setActiveTab(item.id)}
+                onClick={() => handleNavClick(item.id)}
                 className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all group cursor-pointer ${
                   isActive
                     ? 'bg-indigo-50 text-indigo-700 shadow-xs border border-indigo-100'
@@ -133,6 +157,35 @@ export function Sidebar() {
           </div>
         </div>
       </div>
-    </aside>
+    </>
+  );
+
+  return (
+    <>
+      {/* Desktop Persistent Sidebar */}
+      <aside className="hidden lg:flex w-64 bg-white border-r border-slate-200 flex-col justify-between shrink-0 select-none shadow-xs">
+        {navContent}
+      </aside>
+
+      {/* Mobile / Tablet Drawer & Backdrop */}
+      {isMobileMenuOpen && (
+        <div className="fixed inset-0 z-40 lg:hidden">
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs transition-opacity"
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
+
+          {/* Drawer Container */}
+          <aside
+            className={`fixed inset-y-0 ${
+              isUrdu ? 'right-0' : 'left-0'
+            } z-50 w-72 bg-white shadow-2xl flex flex-col justify-between select-none border-r border-slate-200`}
+          >
+            {navContent}
+          </aside>
+        </div>
+      )}
+    </>
   );
 }

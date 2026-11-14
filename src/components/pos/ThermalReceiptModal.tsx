@@ -25,14 +25,14 @@ export function ThermalReceiptModal({
     const cleanPhone = invoice.customer.phone.replace(/[^0-9]/g, '');
     const formattedPhone = cleanPhone.startsWith('0') ? `92${cleanPhone.slice(1)}` : cleanPhone;
     const text = encodeURIComponent(
-      `*${currentTenant.name}*\nReceipt: ${invoice.invoiceNo}\nDate: ${invoice.date}\nTotal: PKR ${invoice.grandTotal.toLocaleString()}\nThank you for shopping with us!`
+      `*${currentTenant.name}*\nReceipt: ${invoice.invoiceNo}\nDate: ${invoice.date}\nTotal: PKR ${invoice.grandTotal.toLocaleString()}\nThank you for shopping with us!\nPowered by Marvelous Solutions`
     );
     window.open(`https://wa.me/${formattedPhone}?text=${text}`, '_blank');
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center z-50 p-4 overflow-y-auto">
-      <div className="bg-white border border-slate-200 rounded-3xl w-full max-w-md p-6 shadow-2xl space-y-4 my-8">
+    <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center z-50 p-2.5 sm:p-4 overflow-y-auto">
+      <div className="bg-white border border-slate-200 rounded-3xl w-full max-w-md p-4 sm:p-6 shadow-2xl space-y-4 my-auto max-h-[92vh] overflow-y-auto">
         {/* Header Actions */}
         <div className="flex items-center justify-between pb-3 border-b border-slate-100">
           <div className="flex items-center gap-2 text-emerald-700 font-bold text-sm">
@@ -175,8 +175,8 @@ export function ThermalReceiptModal({
             <div className="text-[10px] font-bold text-slate-800">
               شکریہ! خریدا ہوا سامان ۳ دن میں اصل رسید کے ساتھ تبدیل ہو سکتا ہے۔
             </div>
-            <div className="text-[8px] text-gray-500">
-              Powered by POSify Hybrid Multi-Tenant Engine
+            <div className="text-[9px] font-semibold text-slate-600 tracking-wide uppercase">
+              Powered by Marvelous Solutions
             </div>
           </div>
         </div>

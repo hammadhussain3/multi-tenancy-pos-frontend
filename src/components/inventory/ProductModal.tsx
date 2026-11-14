@@ -65,20 +65,20 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center z-50 p-4 overflow-y-auto">
-      <div className="bg-white border border-slate-200 rounded-3xl w-full max-w-lg p-6 shadow-2xl space-y-4 my-8">
+    <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center z-50 p-2.5 sm:p-4 overflow-y-auto">
+      <div className="bg-white border border-slate-200 rounded-3xl w-full max-w-lg p-4 sm:p-6 shadow-2xl space-y-4 my-auto max-h-[92vh] overflow-y-auto">
         <div className="flex items-center justify-between pb-3 border-b border-slate-100">
           <div className="font-extrabold text-slate-900 text-sm flex items-center gap-2">
             <Package className="w-4 h-4 text-indigo-600" />
             {product ? 'Edit Product' : 'Add New Retail Product'}
           </div>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-600 font-bold cursor-pointer">
+          <button onClick={onClose} className="text-slate-400 hover:text-slate-600 font-bold cursor-pointer p-1">
             ✕
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-3.5 text-xs">
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-slate-700 font-semibold mb-1">Product Title</label>
               <input
@@ -104,7 +104,7 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-slate-700 font-semibold mb-1">Barcode (EAN-13)</label>
               <input
@@ -127,7 +127,7 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-slate-700 font-semibold mb-1">Category</label>
               <select
@@ -163,7 +163,7 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-slate-700 font-semibold mb-1">
                 Purchase / Cost Price (PKR)
@@ -190,7 +190,7 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-slate-700 font-semibold mb-1">Current Stock</label>
               <input

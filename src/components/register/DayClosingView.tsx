@@ -35,11 +35,11 @@ export function DayClosingView() {
   };
 
   return (
-    <div className="flex-1 flex flex-col h-full overflow-y-auto bg-slate-50 p-6 space-y-6">
+    <div className="flex-1 flex flex-col h-full overflow-y-auto bg-slate-50 p-3 sm:p-6 space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between pb-4 border-b border-slate-200">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-200">
         <div>
-          <h1 className="text-xl font-black text-slate-900 flex items-center gap-2">
+          <h1 className="text-lg sm:text-xl font-black text-slate-900 flex items-center gap-2">
             <Calculator className="w-5 h-5 text-indigo-600" />
             <span>Day-End Register Closing & Cash Reconciliation</span>
           </h1>
@@ -50,7 +50,7 @@ export function DayClosingView() {
 
         <button
           onClick={() => window.print()}
-          className="px-4 py-2 bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 rounded-xl text-xs font-semibold flex items-center gap-2 transition-colors cursor-pointer shadow-2xs"
+          className="self-start sm:self-auto px-4 py-2 bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 rounded-xl text-xs font-semibold flex items-center gap-2 transition-colors cursor-pointer shadow-2xs"
         >
           <Printer className="w-4 h-4 text-indigo-600" />
           <span>Print Z-Report</span>
@@ -58,11 +58,11 @@ export function DayClosingView() {
       </div>
 
       {/* Primary KPI Breakdown */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
         {/* Total Sales */}
-        <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-1">
-          <div className="text-xs font-semibold text-slate-500">Total Gross Sales</div>
-          <div className="text-2xl font-black text-slate-900">
+        <div className="p-3.5 sm:p-4 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-1">
+          <div className="text-[11px] sm:text-xs font-semibold text-slate-500">Total Gross Sales</div>
+          <div className="text-xl sm:text-2xl font-black text-slate-900">
             PKR {totalSalesRevenue.toLocaleString()}
           </div>
           <div className="text-[10px] text-slate-400">
@@ -71,36 +71,36 @@ export function DayClosingView() {
         </div>
 
         {/* Cash Sales */}
-        <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-1">
-          <div className="text-xs font-semibold text-emerald-700 flex items-center gap-1.5">
+        <div className="p-3.5 sm:p-4 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-1">
+          <div className="text-[11px] sm:text-xs font-semibold text-emerald-700 flex items-center gap-1.5">
             <Banknote className="w-4 h-4" />
             <span>Cash Sales</span>
           </div>
-          <div className="text-2xl font-black text-emerald-700">
+          <div className="text-xl sm:text-2xl font-black text-emerald-700">
             PKR {totalCashSales.toLocaleString()}
           </div>
           <div className="text-[10px] text-slate-400">Collected in register drawer</div>
         </div>
 
         {/* Card Sales */}
-        <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-1">
-          <div className="text-xs font-semibold text-indigo-700 flex items-center gap-1.5">
+        <div className="p-3.5 sm:p-4 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-1">
+          <div className="text-[11px] sm:text-xs font-semibold text-indigo-700 flex items-center gap-1.5">
             <CreditCard className="w-4 h-4" />
             <span>Card / Bank POS</span>
           </div>
-          <div className="text-2xl font-black text-indigo-700">
+          <div className="text-xl sm:text-2xl font-black text-indigo-700">
             PKR {totalCardSales.toLocaleString()}
           </div>
           <div className="text-[10px] text-slate-400">Settled to merchant bank account</div>
         </div>
 
         {/* Khata Credit */}
-        <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-1">
-          <div className="text-xs font-semibold text-amber-800 flex items-center gap-1.5">
+        <div className="p-3.5 sm:p-4 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-1">
+          <div className="text-[11px] sm:text-xs font-semibold text-amber-800 flex items-center gap-1.5">
             <BookOpen className="w-4 h-4" />
             <span>Khata (Udhaar) Sales</span>
           </div>
-          <div className="text-2xl font-black text-amber-800">
+          <div className="text-xl sm:text-2xl font-black text-amber-800">
             PKR {totalKhataCredit.toLocaleString()}
           </div>
           <div className="text-[10px] text-slate-400">Recorded in customer receivables</div>
@@ -108,7 +108,7 @@ export function DayClosingView() {
       </div>
 
       {/* Cash Drawer Reconciliation Box */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-2xs p-6 space-y-6 max-w-3xl">
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-2xs p-4 sm:p-6 space-y-4 sm:space-y-6 max-w-3xl">
         <div className="border-b border-slate-100 pb-3">
           <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
             <DollarSign className="w-4 h-4 text-emerald-600" />
@@ -145,18 +145,18 @@ export function DayClosingView() {
             <label className="block text-slate-800 font-bold mb-1.5">
               Physical Cash Counted in Drawer (PKR)
             </label>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2.5 sm:gap-3">
               <input
                 type="number"
                 value={physicalCashCounted || ''}
                 onChange={(e) => setPhysicalCashCounted(parseFloat(e.target.value) || 0)}
                 placeholder="Enter total physical currency count..."
-                className="w-72 px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-base font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-2xs"
+                className="w-full sm:w-72 px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-base font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-2xs"
               />
               <button
                 type="button"
                 onClick={() => setPhysicalCashCounted(expectedDrawerCash)}
-                className="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-indigo-700 border border-slate-200 rounded-xl text-xs font-semibold cursor-pointer"
+                className="self-start sm:self-auto px-3 py-2 bg-slate-100 hover:bg-slate-200 text-indigo-700 border border-slate-200 rounded-xl text-xs font-semibold cursor-pointer"
               >
                 Match Expected
               </button>

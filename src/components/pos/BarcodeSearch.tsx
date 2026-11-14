@@ -52,12 +52,12 @@ export function BarcodeSearch() {
 
   return (
     <>
-      <div className="space-y-3">
+      <div className="space-y-2.5 sm:space-y-3 shrink-0">
         {/* Top Search, Barcode Bar & Quick Add Button */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2">
           <div className="relative flex-1">
-            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-              <Barcode className="w-5 h-5 text-indigo-600" />
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+              <Barcode className="w-4 h-4 sm:w-5 sm:h-5 text-indigo-600" />
             </div>
             <input
               id="barcode-search-input"
@@ -68,10 +68,10 @@ export function BarcodeSearch() {
               onKeyDown={handleKeyDown}
               placeholder={
                 isUrdu
-                  ? 'بارکوڈ اسکین کریں یا پروڈکٹ کا نام تلاش کریں... (F2)'
-                  : 'Scan Barcode or Search Products by Name/SKU... (Press F2 to focus)'
+                  ? 'بارکوڈ اسکین کریں یا نام تلاش کریں...'
+                  : 'Scan barcode or search products by name/SKU...'
               }
-              className="w-full pl-11 pr-10 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all shadow-xs"
+              className="w-full pl-9 sm:pl-11 pr-8 sm:pr-10 py-2 sm:py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 placeholder-slate-400 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all shadow-xs"
               autoFocus
             />
             {searchQuery && (
@@ -80,7 +80,7 @@ export function BarcodeSearch() {
                   setSearchQuery('');
                   inputRef.current?.focus();
                 }}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 cursor-pointer"
+                className="absolute inset-y-0 right-0 pr-2.5 sm:pr-3 flex items-center text-slate-400 hover:text-slate-600 cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -100,16 +100,17 @@ export function BarcodeSearch() {
                 setSearchQuery('');
               }
             }}
-            className="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-xs cursor-pointer shrink-0"
+            className="px-2.5 sm:px-4 py-2 sm:py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-xs cursor-pointer shrink-0"
+            title="Search and add"
           >
             <Search className="w-3.5 h-3.5" />
-            <span>{isUrdu ? 'تلاش' : 'Search / Add'}</span>
+            <span className="hidden sm:inline">{isUrdu ? 'تلاش' : 'Search / Add'}</span>
           </button>
 
           {/* Quick Add Product Button directly from POS screen */}
           <button
             onClick={() => setIsAddModalOpen(true)}
-            className="px-3.5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-xs cursor-pointer shrink-0"
+            className="px-2.5 sm:px-3.5 py-2 sm:py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-xs cursor-pointer shrink-0"
             title="Create and register a new product into catalog"
           >
             <Plus className="w-3.5 h-3.5" />
@@ -118,7 +119,7 @@ export function BarcodeSearch() {
         </div>
 
         {/* Category Filter Pills */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none text-xs">
           {categories.map((cat) => (
             <button
               key={cat}

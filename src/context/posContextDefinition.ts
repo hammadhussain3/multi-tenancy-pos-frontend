@@ -20,6 +20,11 @@ export interface PosContextType {
   isUrdu: boolean;
   setIsUrdu: React.Dispatch<React.SetStateAction<boolean>>;
 
+  isMobileMenuOpen: boolean;
+  setIsMobileMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  isMobileCartOpen: boolean;
+  setIsMobileCartOpen: React.Dispatch<React.SetStateAction<boolean>>;
+
   isOffline: boolean;
   setIsOffline: React.Dispatch<React.SetStateAction<boolean>>;
   pendingSyncCount: number;

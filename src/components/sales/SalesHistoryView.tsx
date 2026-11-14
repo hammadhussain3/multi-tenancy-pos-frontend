@@ -19,11 +19,11 @@ export function SalesHistoryView() {
   const totalSalesAmount = invoices.reduce((sum, inv) => sum + inv.grandTotal, 0);
 
   return (
-    <div className="flex-1 flex flex-col h-full overflow-hidden bg-slate-50 p-4 gap-4">
+    <div className="flex-1 flex flex-col h-full overflow-hidden bg-slate-50 p-2.5 sm:p-4 gap-2.5 sm:gap-4">
       {/* Top Header */}
-      <div className="flex items-center justify-between shrink-0">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 shrink-0">
         <div>
-          <h1 className="text-lg font-black text-slate-900 flex items-center gap-2">
+          <h1 className="text-base sm:text-lg font-black text-slate-900 flex items-center gap-2">
             <Receipt className="w-5 h-5 text-indigo-600" />
             <span>POS Sales Invoices & Order History</span>
           </h1>
@@ -32,13 +32,13 @@ export function SalesHistoryView() {
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
-          <div className="px-4 py-2 rounded-xl bg-white border border-slate-200 shadow-2xs text-xs">
-            <span className="text-slate-500 mr-2">Invoices Today:</span>
-            <span className="font-bold text-slate-900">{invoices.length}</span>
+        <div className="flex items-center gap-2 sm:gap-3">
+          <div className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-white border border-slate-200 shadow-2xs text-xs">
+            <span className="text-slate-500 mr-1.5 sm:mr-2">Today:</span>
+            <span className="font-bold text-slate-900">{invoices.length} inv</span>
           </div>
-          <div className="px-4 py-2 rounded-xl bg-white border border-slate-200 shadow-2xs text-xs">
-            <span className="text-slate-500 mr-2">Total Sales:</span>
+          <div className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-white border border-slate-200 shadow-2xs text-xs">
+            <span className="text-slate-500 mr-1.5 sm:mr-2">Sales:</span>
             <span className="font-black text-emerald-700">
               PKR {totalSalesAmount.toLocaleString()}
             </span>
@@ -47,7 +47,7 @@ export function SalesHistoryView() {
       </div>
 
       {/* Search Input */}
-      <div className="p-3 rounded-2xl bg-white border border-slate-200 shadow-2xs shrink-0">
+      <div className="p-2.5 sm:p-3 rounded-2xl bg-white border border-slate-200 shadow-2xs shrink-0">
         <div className="relative max-w-md">
           <Search className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" />
           <input
@@ -63,7 +63,7 @@ export function SalesHistoryView() {
       {/* Invoices Table */}
       <div className="flex-1 bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden flex flex-col">
         <div className="flex-1 overflow-auto">
-          <table className="w-full text-left text-xs border-collapse">
+          <table className="w-full text-left text-xs border-collapse min-w-[740px]">
             <thead className="bg-slate-50 text-slate-600 uppercase text-[10px] font-semibold sticky top-0 z-10 border-b border-slate-200 backdrop-blur-xs">
               <tr>
                 <th className="py-2.5 px-3">Invoice Number</th>

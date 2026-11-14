@@ -31,7 +31,7 @@ export function ProductCatalog() {
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2.5">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-2.5">
           {filteredProducts.map((product: Product) => {
             const isOutOfStock = product.currentStock <= 0;
             const isLowStock = !isOutOfStock && product.currentStock <= product.minStockAlert;
@@ -41,7 +41,7 @@ export function ProductCatalog() {
                 key={product.id}
                 onClick={() => addToCart(product, 1)}
                 disabled={isOutOfStock}
-                className={`text-left p-3 rounded-xl border flex flex-col justify-between transition-all group relative overflow-hidden ${
+                className={`text-left p-2.5 sm:p-3 rounded-xl border flex flex-col justify-between transition-all group relative overflow-hidden ${
                   isOutOfStock
                     ? 'bg-slate-100/60 border-slate-200 opacity-60 cursor-not-allowed'
                     : 'bg-white hover:bg-slate-50/80 border-slate-200 hover:border-indigo-500/70 hover:shadow-md hover:shadow-indigo-500/5 cursor-pointer active:scale-[0.98]'

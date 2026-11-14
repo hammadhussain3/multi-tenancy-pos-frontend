@@ -25,6 +25,8 @@ export function PosProvider({ children }: { children: ReactNode }) {
   const [tenants] = useState<TenantInfo[]>(INITIAL_TENANTS);
   const [currentTenant, setCurrentTenant] = useState<TenantInfo>(INITIAL_TENANTS[0]);
   const [isUrdu, setIsUrdu] = useState<boolean>(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
+  const [isMobileCartOpen, setIsMobileCartOpen] = useState<boolean>(false);
   const [isOffline, setIsOffline] = useState<boolean>(false);
   const [pendingSyncCount, setPendingSyncCount] = useState<number>(3);
 
@@ -333,6 +335,10 @@ export function PosProvider({ children }: { children: ReactNode }) {
         setCurrentTenant,
         isUrdu,
         setIsUrdu,
+        isMobileMenuOpen,
+        setIsMobileMenuOpen,
+        isMobileCartOpen,
+        setIsMobileCartOpen,
         isOffline,
         setIsOffline,
         pendingSyncCount,
