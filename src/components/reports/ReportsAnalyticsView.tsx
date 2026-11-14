@@ -430,7 +430,7 @@ export function ReportsAnalyticsView() {
   }, [displayedStockHealth, validStockPage, stockPageSize]);
 
   return (
-    <div className="flex-1 min-h-0 flex flex-col p-2.5 sm:p-4 gap-3 bg-slate-100 dark:bg-[#0b0f19] overflow-hidden select-none">
+    <div className="flex-1 min-h-0 flex flex-col p-2.5 sm:p-3.5 gap-2 sm:gap-2.5 bg-slate-100 dark:bg-[#0b0f19] overflow-hidden select-none">
       {/* 1. Header & Date Range Filter Toolbar */}
       <div className="p-3 sm:p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xs space-y-3 shrink-0">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">

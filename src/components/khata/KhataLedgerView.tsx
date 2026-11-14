@@ -61,7 +61,7 @@ export function KhataLedgerView() {
   };
 
   return (
-    <div className="flex-1 min-h-0 flex flex-col h-full overflow-hidden bg-slate-50 dark:bg-[#0b0f19] p-2.5 sm:p-4 gap-2.5 sm:gap-4 transition-colors duration-200">
+    <div className="flex-1 min-h-0 flex flex-col overflow-hidden bg-slate-50 dark:bg-[#0b0f19] p-2.5 sm:p-3.5 gap-2 sm:gap-3 transition-colors duration-200">
       {/* Top Metric Bar */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 shrink-0">
         <div className="p-3.5 sm:p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs flex items-center justify-between">
@@ -148,7 +148,7 @@ export function KhataLedgerView() {
             </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-2 space-y-1.5">
+          <div className="flex-1 min-h-0 overflow-y-auto p-2 space-y-1.5">
             {filteredCustomers.map((customer) => {
               const isSelected = activeCustomer?.id === customer.id;
               const isOverLimit = customer.currentBalance > customer.creditLimit;
@@ -202,10 +202,10 @@ export function KhataLedgerView() {
           <div
             className={`${
               mobileTab === 'statement' ? 'flex' : 'hidden'
-            } lg:flex flex-1 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xs flex-col overflow-hidden`}
+            } lg:flex flex-1 min-h-0 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xs flex-col overflow-hidden`}
           >
             {/* Header info */}
-            <div className="p-3 sm:p-4 border-b border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/70 dark:bg-slate-800/60">
+            <div className="p-3 sm:p-4 border-b border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/70 dark:bg-slate-800/60 shrink-0">
               <div>
                 <div className="flex items-center gap-2">
                   {/* Mobile Back Button */}
@@ -251,15 +251,16 @@ export function KhataLedgerView() {
             </div>
 
             {/* Ledger Timeline Table */}
-            <div className="flex-1 overflow-y-auto p-2.5 sm:p-4">
-              <div className="text-xs font-bold text-slate-700 dark:text-slate-300 mb-2.5 flex items-center gap-1.5">
+            <div className="flex-1 min-h-0 overflow-hidden p-2.5 sm:p-3.5 flex flex-col gap-2">
+              <div className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5 shrink-0">
                 <FileText className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
                 <span>Double-Entry Statement (Khata Register)</span>
               </div>
 
-              <div className="rounded-xl border border-slate-200 dark:border-slate-800 overflow-x-auto bg-white dark:bg-slate-900 shadow-2xs">
-                <table className="w-full text-left text-xs min-w-[620px]">
-                  <thead className="bg-slate-50 dark:bg-slate-800/80 text-slate-600 dark:text-slate-400 uppercase text-[10px] font-semibold border-b border-slate-200 dark:border-slate-800">
+              <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs overflow-hidden flex flex-col flex-1 min-h-0">
+                <div className="flex-1 min-h-0 overflow-auto">
+                  <table className="w-full text-left text-xs min-w-[620px]">
+                    <thead className="bg-slate-50 dark:bg-slate-800/80 text-slate-600 dark:text-slate-400 uppercase text-[10px] font-semibold sticky top-0 z-10 border-b border-slate-200 dark:border-slate-800 backdrop-blur-xs">
                     <tr>
                       <th className="py-2.5 px-3">Date & Time</th>
                       <th className="py-2.5 px-3">Type & Ref</th>
@@ -306,7 +307,8 @@ export function KhataLedgerView() {
                       ))
                     )}
                   </tbody>
-                </table>
+                  </table>
+                </div>
 
                 {/* DataTable Pagination (Default: 10 records per page) */}
                 <DataTablePagination
