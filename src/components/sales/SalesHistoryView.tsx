@@ -130,21 +130,28 @@ export function SalesHistoryView() {
                     </td>
 
                     <td className="py-2.5 px-3">
-                      <div className="flex items-center gap-1">
-                        {inv.payments.cash > 0 && (
-                          <span className="px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 text-[10px] font-bold">
-                            Cash
-                          </span>
-                        )}
-                        {inv.payments.card > 0 && (
-                          <span className="px-1.5 py-0.5 rounded bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 text-[10px] font-bold">
-                            Card
-                          </span>
-                        )}
-                        {inv.payments.khata > 0 && (
-                          <span className="px-1.5 py-0.5 rounded bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800 text-[10px] font-bold">
-                            Khata
-                          </span>
+                      <div className="flex flex-col gap-1">
+                        <div className="flex items-center gap-1">
+                          {inv.payments.cash > 0 && (
+                            <span className="px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 text-[10px] font-bold">
+                              Cash
+                            </span>
+                          )}
+                          {inv.payments.card > 0 && (
+                            <span className="px-1.5 py-0.5 rounded bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 text-[10px] font-bold">
+                              Card
+                            </span>
+                          )}
+                          {inv.payments.khata > 0 && (
+                            <span className="px-1.5 py-0.5 rounded bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800 text-[10px] font-bold">
+                              Khata
+                            </span>
+                          )}
+                        </div>
+                        {inv.cashTendered !== undefined && inv.cashTendered > inv.payments.cash && (
+                          <div className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">
+                            Paid: <strong className="font-bold text-slate-700 dark:text-slate-200">{inv.cashTendered.toLocaleString()}</strong> | Change: <strong className="font-bold text-emerald-600 dark:text-emerald-400">{(inv.changeGiven || 0).toLocaleString()}</strong>
+                          </div>
                         )}
                       </div>
                     </td>

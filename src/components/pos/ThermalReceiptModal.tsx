@@ -11,7 +11,7 @@ export function ThermalReceiptModal({
   invoice,
   onClose,
 }: ThermalReceiptModalProps) {
-  const { currentTenant } = usePos();
+  const { currentTenant, isUrdu } = usePos();
 
   const handlePrint = () => {
     window.print();
@@ -37,7 +37,7 @@ export function ThermalReceiptModal({
         <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
           <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-400 font-bold text-sm">
             <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-            <span>Sale Completed Successfully</span>
+            <span>{isUrdu ? 'فروخت مکمل ہو گئی' : 'Sale Completed Successfully'}</span>
           </div>
           <button
             onClick={onClose}
@@ -46,6 +46,28 @@ export function ThermalReceiptModal({
             <X className="w-5 h-5" />
           </button>
         </div>
+
+        {/* Cash Tendered & Change Return Highlight Banner */}
+        {invoice.cashTendered !== undefined && invoice.cashTendered > 0 && (
+          <div className="p-3.5 rounded-2xl bg-gradient-to-r from-emerald-500/15 via-teal-500/15 to-emerald-500/10 border border-emerald-300 dark:border-emerald-700 text-slate-900 dark:text-slate-100 flex items-center justify-between shadow-xs print:hidden">
+            <div>
+              <div className="text-[10px] font-bold uppercase tracking-wider text-emerald-800 dark:text-emerald-400">
+                {isUrdu ? 'کیش ادائیگی اور بقایا' : 'Cash Tendered & Change'}
+              </div>
+              <div className="text-xs font-semibold text-slate-600 dark:text-slate-300 mt-0.5">
+                Received: <strong className="font-black text-slate-900 dark:text-slate-100">PKR {invoice.cashTendered.toLocaleString()}</strong> | Bill: PKR {invoice.grandTotal.toLocaleString()}
+              </div>
+            </div>
+            <div className="text-right">
+              <div className="text-[10px] font-bold text-emerald-800 dark:text-emerald-400">
+                {isUrdu ? 'واپسی بقایا رقم' : 'Change to Return'}
+              </div>
+              <div className="text-base sm:text-lg font-black text-emerald-600 dark:text-emerald-400">
+                PKR {(invoice.changeGiven || 0).toLocaleString()}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* 80mm Thermal Receipt Canvas (Authentic Clean Paper Appearance) */}
         <div

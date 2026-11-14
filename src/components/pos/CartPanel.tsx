@@ -60,6 +60,30 @@ export function CartPanel({
   const [customerSearch, setCustomerSearch] = useState('');
   const [showSplitModal, setShowSplitModal] = useState(false);
 
+  // Cash Tendered & Change Return State
+  const [cashTenderedInput, setCashTenderedInput] = useState<number | ''>('');
+  const actualCashTendered = cashTenderedInput === '' ? cartTotal : Number(cashTenderedInput);
+  const changeToReturn = Math.max(0, actualCashTendered - cartTotal);
+  const isUnderpaid = actualCashTendered < cartTotal;
+
+  // Generate standard Pakistani Rupee currency note quick chips (Rs 500, Rs 1000, Rs 5000)
+  const quickCashNotes = useMemo(() => {
+    if (cartTotal <= 0) return [];
+    const candidates = [500, 1000, 2000, 5000];
+    const notes: number[] = [];
+    for (const c of candidates) {
+      if (c >= cartTotal && !notes.includes(c)) {
+        notes.push(c);
+      }
+    }
+    const nextRound500 = Math.ceil(cartTotal / 500) * 500;
+    if (nextRound500 > cartTotal && !notes.includes(nextRound500) && nextRound500 < 5000) {
+      notes.push(nextRound500);
+    }
+    notes.sort((a, b) => a - b);
+    return notes.slice(0, 3);
+  }, [cartTotal]);
+
   const filteredCustomers = useMemo(() => {
     const q = customerSearch.toLowerCase().trim();
     if (!q) return customers;
@@ -75,6 +99,10 @@ export function CartPanel({
 
   const handleQuickCash = () => {
     if (cart.length === 0) return;
+    if (isUnderpaid) {
+      alert(`Customer provided PKR ${actualCashTendered}, which is less than the total bill PKR ${cartTotal}.`);
+      return;
+    }
     processCheckout(
       'cash',
       {
@@ -82,9 +110,10 @@ export function CartPanel({
         card: 0,
         khata: 0,
       },
-      cartTotal,
-      0
+      actualCashTendered,
+      changeToReturn
     );
+    setCashTenderedInput('');
     setIsMobileCartOpen(false);
   };
 
@@ -392,6 +421,77 @@ export function CartPanel({
               </div>
             </div>
           </div>
+
+          {/* Cash Tendered & Change Return Live Calculator */}
+          {cart.length > 0 && (
+            <div className="pt-1.5 mt-1 border-t border-slate-200/80 dark:border-slate-800 space-y-1.5 bg-slate-50/70 dark:bg-slate-800/50 p-2 rounded-xl">
+              <div className="flex items-center justify-between gap-1.5">
+                <span className="text-[10px] font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1">
+                  <Banknote className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                  <span>{isUrdu ? 'کیش موصول (گاہک نے دیا)' : 'Cash Received:'}</span>
+                </span>
+                <div className="flex items-center gap-1">
+                  <span className="text-[10px] font-bold text-slate-400">PKR</span>
+                  <input
+                    type="number"
+                    value={cashTenderedInput}
+                    onChange={(e) =>
+                      setCashTenderedInput(e.target.value === '' ? '' : parseFloat(e.target.value) || 0)
+                    }
+                    placeholder={cartTotal.toString()}
+                    className="w-24 text-right text-xs font-black px-2 py-0.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                  />
+                </div>
+              </div>
+
+              {/* Currency Note Quick Chips */}
+              <div className="flex items-center gap-1 overflow-x-auto pb-0.5">
+                <button
+                  type="button"
+                  onClick={() => setCashTenderedInput('')}
+                  className={`px-1.5 py-0.5 text-[9px] font-bold rounded border transition-colors cursor-pointer shrink-0 ${
+                    cashTenderedInput === '' || cashTenderedInput === cartTotal
+                      ? 'bg-emerald-600 text-white border-emerald-600'
+                      : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:bg-slate-100'
+                  }`}
+                >
+                  Exact ({cartTotal.toLocaleString()})
+                </button>
+                {quickCashNotes.map((note) => (
+                  <button
+                    key={note}
+                    type="button"
+                    onClick={() => setCashTenderedInput(note)}
+                    className={`px-1.5 py-0.5 text-[9px] font-bold rounded border transition-colors cursor-pointer shrink-0 ${
+                      cashTenderedInput === note
+                        ? 'bg-emerald-600 text-white border-emerald-600'
+                        : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:bg-slate-100'
+                    }`}
+                  >
+                    Rs {note.toLocaleString()}
+                  </button>
+                ))}
+              </div>
+
+              {/* Change Return Live Display */}
+              <div className="flex items-center justify-between px-2 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800">
+                <span className="text-[10px] font-bold text-emerald-900 dark:text-emerald-300">
+                  {isUrdu ? 'واپسی بقایا رقم (Change):' : 'Change to Return:'}
+                </span>
+                <span className="text-xs font-black">
+                  {isUnderpaid ? (
+                    <span className="text-rose-600 dark:text-rose-400 font-black">
+                      -PKR {(cartTotal - actualCashTendered).toLocaleString()} short
+                    </span>
+                  ) : (
+                    <span className="text-emerald-700 dark:text-emerald-400 font-black">
+                      PKR {changeToReturn.toLocaleString()}
+                    </span>
+                  )}
+                </span>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* High-Impact POS Action Buttons: ALWAYS VISIBLE, NEVER CUT OFF */}
