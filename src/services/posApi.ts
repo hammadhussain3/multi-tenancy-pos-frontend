@@ -21,13 +21,52 @@ export function getActiveTenantId(): number | string {
   return currentTenantId;
 }
 
+// Active Token management (Laravel Sanctum Bearer Token)
+let authToken: string | null =
+  typeof window !== 'undefined' ? localStorage.getItem('posify_auth_token') : null;
+
+export function setAuthToken(token: string | null) {
+  authToken = token;
+  if (typeof window !== 'undefined') {
+    if (token) {
+      localStorage.setItem('posify_auth_token', token);
+    } else {
+      localStorage.removeItem('posify_auth_token');
+    }
+  }
+}
+
+export function getAuthToken(): string | null {
+  return authToken;
+}
+
 function getHeaders(customHeaders: Record<string, string> = {}): Record<string, string> {
-  return {
+  const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     Accept: 'application/json',
     'X-Tenant-ID': String(currentTenantId),
     ...customHeaders,
   };
+  if (authToken) {
+    headers['Authorization'] = `Bearer ${authToken}`;
+  }
+  return headers;
+}
+
+export interface AuthUser {
+  id: number;
+  name: string;
+  email: string;
+  role: 'admin' | 'manager' | 'cashier';
+  tenant_id: number;
+}
+
+export interface AuthResponse {
+  success: boolean;
+  message?: string;
+  token?: string;
+  user?: AuthUser;
+  tenant?: TenantInfo;
 }
 
 // Backend DTO representations (snake_case)
@@ -264,6 +303,64 @@ export function mapBackendTenantToTenantInfo(dto: BackendTenantDTO): TenantInfo 
 // ---------------------------------------------------------------------------
 
 export const posApi = {
+  // Authentication & Shift Access (Laravel Sanctum)
+  auth: {
+    async login(email: string, password: string, deviceName = 'POS-Terminal'): Promise<AuthResponse> {
+      const res = await fetch(`${API_BASE_URL}/auth/login`, {
+        method: 'POST',
+        headers: getHeaders(),
+        body: JSON.stringify({ email, password, device_name: deviceName }),
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        throw new Error(json.message || 'Login failed.');
+      }
+      if (json.token) {
+        setAuthToken(json.token);
+      }
+      return json;
+    },
+
+    async pinLogin(pinCode: string, tenantId?: number | string, deviceName = 'REG-01'): Promise<AuthResponse> {
+      const tid = tenantId ?? currentTenantId;
+      const res = await fetch(`${API_BASE_URL}/auth/pin-login`, {
+        method: 'POST',
+        headers: getHeaders({ 'X-Tenant-ID': String(tid) }),
+        body: JSON.stringify({ pin_code: pinCode, tenant_id: tid, device_name: deviceName }),
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        throw new Error(json.message || 'Incorrect PIN code.');
+      }
+      if (json.token) {
+        setAuthToken(json.token);
+      }
+      return json;
+    },
+
+    async me(): Promise<{ user: AuthUser; tenant: TenantInfo }> {
+      const res = await fetch(`${API_BASE_URL}/auth/me`, {
+        headers: getHeaders(),
+      });
+      if (!res.ok) {
+        throw new Error('Unauthenticated');
+      }
+      const json = await res.json();
+      return json;
+    },
+
+    async logout(): Promise<void> {
+      try {
+        await fetch(`${API_BASE_URL}/auth/logout`, {
+          method: 'POST',
+          headers: getHeaders(),
+        });
+      } finally {
+        setAuthToken(null);
+      }
+    },
+  },
+
   // Multi-Tenancy
   setActiveTenantId(id: number | string) {
     setActiveTenantId(id);
