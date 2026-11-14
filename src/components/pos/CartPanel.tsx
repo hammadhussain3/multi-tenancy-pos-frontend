@@ -15,11 +15,20 @@ import {
   ShoppingBag,
   Sparkles,
   ArrowRight,
+  ArrowLeft,
 } from 'lucide-react';
 import { usePos } from '../../context/usePos';
 import { SplitPaymentModal } from './SplitPaymentModal';
 
-export function CartPanel() {
+interface CartPanelProps {
+  isMobileFullView?: boolean;
+  onBackToCatalog?: () => void;
+}
+
+export function CartPanel({
+  isMobileFullView = false,
+  onBackToCatalog,
+}: CartPanelProps) {
   const {
     cart,
     updateQuantity,
@@ -74,20 +83,31 @@ export function CartPanel() {
   const cartContent = (
     <div className="flex flex-col h-full w-full overflow-hidden select-none bg-white dark:bg-slate-900 transition-colors duration-200">
       {/* 1. Header: Order Bar & Customer Chip */}
-      <div className="p-3 sm:p-3.5 border-b border-slate-200/80 dark:border-slate-800 space-y-2.5 shrink-0 bg-slate-50/70 dark:bg-slate-900/90 backdrop-blur-xs">
+      <div className="p-2.5 sm:p-3 border-b border-slate-200/80 dark:border-slate-800 space-y-2 shrink-0 bg-slate-50/70 dark:bg-slate-900/90 backdrop-blur-xs">
         {/* Top Order Row */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-700 text-white flex items-center justify-center shadow-xs">
-              <Receipt className="w-4 h-4" />
+            {onBackToCatalog && (
+              <button
+                onClick={onBackToCatalog}
+                className="lg:hidden p-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-950/80 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 flex items-center gap-1 cursor-pointer font-bold text-xs"
+                title="Back to Catalog"
+              >
+                <ArrowLeft className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">{isUrdu ? 'کیٹلاگ' : 'Catalog'}</span>
+              </button>
+            )}
+
+            <div className="w-7 h-7 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-700 text-white flex items-center justify-center shadow-xs shrink-0">
+              <Receipt className="w-3.5 h-3.5" />
             </div>
             <div>
               <div className="text-xs font-black text-slate-900 dark:text-slate-100 flex items-center gap-1.5 leading-none">
                 <span>{isUrdu ? 'موجودہ آرڈر' : 'Current Order'}</span>
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
               </div>
-              <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-1 leading-none font-medium">
-                {totalItemCount} {totalItemCount === 1 ? 'item' : 'items'} in cart
+              <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 leading-none font-medium">
+                {totalItemCount} {totalItemCount === 1 ? 'item' : 'items'}
               </div>
             </div>
           </div>
@@ -104,35 +124,37 @@ export function CartPanel() {
               </button>
             )}
 
-            {/* Mobile Drawer Close */}
-            <button
-              onClick={() => setIsMobileCartOpen(false)}
-              className="lg:hidden p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer transition-colors"
-              title="Close cart"
-              aria-label="Close cart drawer"
-            >
-              <X className="w-5 h-5" />
-            </button>
+            {/* Mobile Drawer Close (only when in drawer mode) */}
+            {!isMobileFullView && (
+              <button
+                onClick={() => setIsMobileCartOpen(false)}
+                className="lg:hidden p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer transition-colors"
+                title="Close cart"
+                aria-label="Close cart drawer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
           </div>
         </div>
 
         {/* Customer / Khata Selection Bar */}
         <div className="relative">
           {selectedCustomer ? (
-            <div className="p-2.5 rounded-xl bg-emerald-50/80 dark:bg-emerald-950/40 border border-emerald-200/80 dark:border-emerald-800 flex items-center justify-between gap-2 shadow-2xs">
+            <div className="p-2 rounded-xl bg-emerald-50/80 dark:bg-emerald-950/40 border border-emerald-200/80 dark:border-emerald-800 flex items-center justify-between gap-2 shadow-2xs">
               <div className="flex items-center gap-2 min-w-0">
-                <div className="w-7 h-7 rounded-lg bg-emerald-600 text-white flex items-center justify-center text-xs font-bold shrink-0 shadow-2xs">
-                  <UserCheck className="w-3.5 h-3.5" />
+                <div className="w-6 h-6 rounded-lg bg-emerald-600 text-white flex items-center justify-center text-xs font-bold shrink-0 shadow-2xs">
+                  <UserCheck className="w-3 h-3" />
                 </div>
                 <div className="min-w-0">
-                  <div className="text-xs font-bold text-slate-900 dark:text-slate-100 truncate">
+                  <div className="text-xs font-bold text-slate-900 dark:text-slate-100 truncate leading-tight">
                     {selectedCustomer.name}
                   </div>
-                  <div className="text-[10px] text-slate-500 dark:text-slate-400 flex items-center gap-1.5 mt-0.5">
+                  <div className="text-[10px] text-slate-500 dark:text-slate-400 flex items-center gap-1.5 leading-tight">
                     <span>{selectedCustomer.phone}</span>
                     <span>•</span>
                     <span className="font-semibold text-amber-700 dark:text-amber-400">
-                      Khata: PKR {selectedCustomer.currentBalance.toLocaleString()}
+                      PKR {selectedCustomer.currentBalance.toLocaleString()}
                     </span>
                   </div>
                 </div>
@@ -140,7 +162,7 @@ export function CartPanel() {
 
               <button
                 onClick={() => setSelectedCustomer(null)}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-white dark:hover:bg-slate-800 transition-colors cursor-pointer shrink-0"
+                className="p-1 rounded-lg text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-white dark:hover:bg-slate-800 transition-colors cursor-pointer shrink-0"
                 title="Switch back to Walk-in Customer"
               >
                 <X className="w-3.5 h-3.5" />
@@ -149,22 +171,22 @@ export function CartPanel() {
           ) : (
             <button
               onClick={() => setShowCustomerPicker(true)}
-              className="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-800 hover:bg-indigo-50/50 dark:hover:bg-slate-800/80 border border-dashed border-slate-300 dark:border-slate-700 hover:border-indigo-400 dark:hover:border-indigo-500 text-slate-700 dark:text-slate-200 transition-all flex items-center justify-between group shadow-2xs cursor-pointer"
+              className="w-full px-2.5 py-1.5 rounded-xl bg-white dark:bg-slate-800 hover:bg-indigo-50/50 dark:hover:bg-slate-800/80 border border-dashed border-slate-300 dark:border-slate-700 hover:border-indigo-400 dark:hover:border-indigo-500 text-slate-700 dark:text-slate-200 transition-all flex items-center justify-between group shadow-2xs cursor-pointer"
             >
               <div className="flex items-center gap-2 text-xs">
-                <div className="w-6 h-6 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white transition-colors">
-                  <BookOpen className="w-3.5 h-3.5" />
+                <div className="w-5 h-5 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                  <BookOpen className="w-3 h-3" />
                 </div>
                 <div className="text-left">
-                  <span className="font-semibold text-slate-800 dark:text-slate-200">
+                  <span className="font-semibold text-slate-800 dark:text-slate-200 text-xs">
                     {isUrdu ? 'گاہک منتخب کریں (کھاتہ)' : 'Walk-in Customer'}
                   </span>
-                  <span className="text-[10px] text-slate-400 dark:text-slate-500 block leading-tight">
+                  <span className="text-[9px] text-slate-400 dark:text-slate-500 block leading-tight">
                     {isUrdu ? 'نقد فروخت' : 'Cash sale (Tap to attach Khata)'}
                   </span>
                 </div>
               </div>
-              <span className="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 group-hover:translate-x-0.5 transition-transform flex items-center gap-0.5">
+              <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 group-hover:translate-x-0.5 transition-transform flex items-center gap-0.5">
                 <span>+ Khata</span>
                 <ArrowRight className="w-3 h-3" />
               </span>
@@ -173,45 +195,45 @@ export function CartPanel() {
         </div>
       </div>
 
-      {/* 2. Middle: Cart Items or Engaging Empty State */}
-      <div className="flex-1 min-h-0 overflow-y-auto p-3 space-y-2.5 divide-y divide-slate-100 dark:divide-slate-800">
+      {/* 2. Middle: Cart Items or Compact Engaging Empty State */}
+      <div className="flex-1 min-h-0 overflow-y-auto p-2.5 sm:p-3 space-y-2 divide-y divide-slate-100 dark:divide-slate-800">
         {cart.length === 0 ? (
-          <div className="h-full flex flex-col items-center justify-center text-center p-4 py-8">
+          <div className="h-full min-h-[160px] flex flex-col items-center justify-center text-center p-3 py-4 sm:py-6">
             {/* Visual Icon Badge */}
-            <div className="relative mb-3">
-              <div className="w-16 h-16 rounded-3xl bg-gradient-to-tr from-indigo-500/10 via-indigo-500/20 to-purple-500/10 dark:from-indigo-500/20 dark:to-purple-500/20 border border-indigo-200/50 dark:border-indigo-800/60 flex items-center justify-center shadow-inner">
-                <ShoppingBag className="w-8 h-8 text-indigo-600 dark:text-indigo-400" />
+            <div className="relative mb-2">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-indigo-500/10 via-indigo-500/20 to-purple-500/10 dark:from-indigo-500/20 dark:to-purple-500/20 border border-indigo-200/50 dark:border-indigo-800/60 flex items-center justify-center shadow-inner">
+                <ShoppingBag className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
               </div>
-              <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-xs">
-                <Sparkles className="w-3 h-3" />
+              <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-xs">
+                <Sparkles className="w-2.5 h-2.5" />
               </div>
             </div>
 
             {/* Title & Microcopy */}
-            <h3 className="text-sm font-black text-slate-900 dark:text-slate-100">
+            <h3 className="text-xs sm:text-sm font-black text-slate-900 dark:text-slate-100">
               {isUrdu ? 'ٹوکری خالی ہے' : 'Ready for Next Sale'}
             </h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-[220px] leading-relaxed">
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 max-w-[210px] leading-snug">
               {isUrdu
                 ? 'بارکوڈ اسکین کریں یا کیٹلاگ سے پروڈکٹ منتخب کریں۔'
-                : 'Scan barcodes or tap products on the catalog to begin ringing up order.'}
+                : 'Scan barcodes or tap products on the catalog to begin order.'}
             </p>
 
             {/* Quick POS Pro-Tips Card */}
-            <div className="mt-5 w-full max-w-[240px] p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-800 text-[11px] text-left space-y-1.5 shadow-2xs">
-              <div className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300 font-bold text-[10px] uppercase tracking-wider">
+            <div className="mt-3 w-full max-w-[220px] p-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-800 text-[10px] text-left space-y-1 shadow-2xs">
+              <div className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300 font-bold text-[9px] uppercase tracking-wider">
                 <Zap className="w-3 h-3 text-amber-500" />
-                <span>POS Shortcuts</span>
+                <span>Quick Shortcuts</span>
               </div>
-              <div className="flex items-center justify-between text-slate-600 dark:text-slate-400 text-[10px]">
+              <div className="flex items-center justify-between text-slate-600 dark:text-slate-400 text-[9px]">
                 <span>Scan Barcode:</span>
-                <kbd className="px-1.5 py-0.5 rounded bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 font-mono text-[9px] font-bold text-slate-800 dark:text-slate-200">
+                <kbd className="px-1 py-0.2 rounded bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 font-mono font-bold text-slate-800 dark:text-slate-200">
                   F2
                 </kbd>
               </div>
-              <div className="flex items-center justify-between text-slate-600 dark:text-slate-400 text-[10px]">
-                <span>Focus Terminal:</span>
-                <kbd className="px-1.5 py-0.5 rounded bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 font-mono text-[9px] font-bold text-slate-800 dark:text-slate-200">
+              <div className="flex items-center justify-between text-slate-600 dark:text-slate-400 text-[9px]">
+                <span>Switch Tab:</span>
+                <kbd className="px-1 py-0.2 rounded bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 font-mono font-bold text-slate-800 dark:text-slate-200">
                   F12
                 </kbd>
               </div>
@@ -221,7 +243,7 @@ export function CartPanel() {
           cart.map((item) => (
             <div
               key={item.product.id}
-              className="pt-2.5 first:pt-0 space-y-2 group transition-all"
+              className="pt-2 first:pt-0 space-y-1.5 group transition-all"
             >
               <div className="flex justify-between items-start gap-2">
                 <div className="min-w-0 flex-1">
@@ -229,22 +251,16 @@ export function CartPanel() {
                     {item.product.name}
                   </div>
                   {isUrdu && item.product.nameUrdu && (
-                    <div className="text-[11px] text-amber-800 dark:text-amber-400 font-medium">
+                    <div className="text-[10px] text-amber-800 dark:text-amber-400 font-medium">
                       {item.product.nameUrdu}
                     </div>
                   )}
-                  <div className="text-[10px] text-slate-500 dark:text-slate-400 flex items-center gap-1.5 mt-0.5">
+                  <div className="text-[10px] text-slate-500 dark:text-slate-400 flex items-center gap-1 mt-0.5">
                     <span className="font-semibold text-slate-700 dark:text-slate-300">
                       PKR {item.unitPrice.toLocaleString()}
                     </span>
                     <span>/</span>
                     <span>{item.product.unit}</span>
-                    {item.product.sku && (
-                      <>
-                        <span>•</span>
-                        <span className="text-slate-400">{item.product.sku}</span>
-                      </>
-                    )}
                   </div>
                 </div>
 
@@ -260,20 +276,20 @@ export function CartPanel() {
               {/* Controls Row: Qty Stepper, Line Discount, Line Total */}
               <div className="flex items-center justify-between gap-2 pt-0.5">
                 {/* Stepper */}
-                <div className="flex items-center border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-800 shadow-2xs overflow-hidden">
+                <div className="flex items-center border border-slate-200 dark:border-slate-700 rounded-lg bg-slate-50 dark:bg-slate-800 shadow-2xs overflow-hidden">
                   <button
                     onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
-                    className="p-1.5 px-2 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-colors cursor-pointer active:scale-95"
+                    className="p-1 px-2 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-colors cursor-pointer active:scale-95"
                     aria-label="Decrease quantity"
                   >
                     <Minus className="w-3 h-3" />
                   </button>
-                  <span className="w-8 text-center text-xs font-black text-slate-900 dark:text-slate-100">
+                  <span className="w-7 text-center text-xs font-black text-slate-900 dark:text-slate-100">
                     {item.quantity}
                   </span>
                   <button
                     onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
-                    className="p-1.5 px-2 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-colors cursor-pointer active:scale-95"
+                    className="p-1 px-2 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-colors cursor-pointer active:scale-95"
                     aria-label="Increase quantity"
                   >
                     <Plus className="w-3 h-3" />
@@ -282,7 +298,7 @@ export function CartPanel() {
 
                 {/* Line Discount Input */}
                 <div className="flex items-center gap-1.5">
-                  <div className="flex items-center gap-1 px-1.5 py-0.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg">
+                  <div className="flex items-center gap-1 px-1.5 py-0.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md">
                     <Tag className="w-2.5 h-2.5 text-slate-400" />
                     <input
                       type="number"
@@ -291,13 +307,13 @@ export function CartPanel() {
                         updateDiscount(item.product.id, parseFloat(e.target.value) || 0)
                       }
                       placeholder="Disc"
-                      className="w-10 text-center text-[10px] bg-transparent text-slate-800 dark:text-slate-200 font-semibold focus:outline-none placeholder-slate-400"
+                      className="w-9 text-center text-[9px] bg-transparent text-slate-800 dark:text-slate-200 font-semibold focus:outline-none placeholder-slate-400"
                       title="Item discount in PKR"
                     />
                   </div>
 
                   {/* Line Total */}
-                  <div className="text-xs font-black text-slate-900 dark:text-slate-100 min-w-[70px] text-right">
+                  <div className="text-xs font-black text-slate-900 dark:text-slate-100 min-w-[65px] text-right">
                     PKR {item.total.toLocaleString()}
                   </div>
                 </div>
@@ -308,10 +324,10 @@ export function CartPanel() {
       </div>
 
       {/* 3. Footer Summary & Checkout Actions (Sticky & High-Contrast) */}
-      <div className="p-3 sm:p-3.5 border-t border-slate-200/90 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/95 space-y-2.5 shrink-0 shadow-lg">
+      <div className="p-2.5 sm:p-3 border-t border-slate-200/90 dark:border-slate-800 bg-slate-50/95 dark:bg-slate-900/95 backdrop-blur-xs space-y-2 shrink-0 shadow-lg z-10">
         {/* Financial Breakdown */}
         <div className="space-y-1 text-xs">
-          <div className="flex justify-between text-slate-600 dark:text-slate-400">
+          <div className="flex justify-between text-slate-600 dark:text-slate-400 text-[11px]">
             <span>Subtotal:</span>
             <span className="text-slate-900 dark:text-slate-100 font-semibold">
               PKR {cartSubtotal.toLocaleString()}
@@ -319,7 +335,7 @@ export function CartPanel() {
           </div>
 
           {cartDiscount > 0 && (
-            <div className="flex justify-between text-amber-700 dark:text-amber-400 font-semibold">
+            <div className="flex justify-between text-amber-700 dark:text-amber-400 font-semibold text-[11px]">
               <span className="flex items-center gap-1">
                 <Tag className="w-3 h-3" />
                 <span>Discount:</span>
@@ -328,57 +344,54 @@ export function CartPanel() {
             </div>
           )}
 
-          <div className="flex justify-between text-slate-500 dark:text-slate-400 text-[11px]">
+          <div className="flex justify-between text-slate-500 dark:text-slate-400 text-[10px]">
             <span>FBR POS Sales Tax (0%):</span>
             <span className="font-semibold text-slate-800 dark:text-slate-200">PKR {cartTax}</span>
           </div>
 
           {/* Grand Total Display Bar */}
-          <div className="pt-2 mt-1 border-t border-slate-200 dark:border-slate-800 flex justify-between items-baseline">
+          <div className="pt-1.5 mt-0.5 border-t border-slate-200 dark:border-slate-800 flex justify-between items-baseline">
             <div>
-              <div className="text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                {isUrdu ? 'کل واجب الادا رقم' : 'TOTAL PAYABLE'}
-              </div>
-              <div className="text-[9px] text-emerald-700 dark:text-emerald-400 font-semibold">
-                FBR Fiscalized Invoice
+              <div className="text-[9px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                {isUrdu ? 'کل رقم' : 'TOTAL PAYABLE'}
               </div>
             </div>
             <div className="text-right">
-              <div className="text-xl sm:text-2xl font-black text-emerald-700 dark:text-emerald-400 tracking-tight">
+              <div className="text-lg sm:text-xl font-black text-emerald-700 dark:text-emerald-400 tracking-tight leading-none">
                 PKR {cartTotal.toLocaleString()}
               </div>
             </div>
           </div>
         </div>
 
-        {/* High-Impact POS Action Buttons */}
-        <div className="grid grid-cols-2 gap-2 pt-1">
+        {/* High-Impact POS Action Buttons: ALWAYS VISIBLE, NEVER CUT OFF */}
+        <div className="grid grid-cols-2 gap-2 pt-0.5">
           {/* Quick Cash Checkout */}
           <button
             onClick={handleQuickCash}
             disabled={cart.length === 0}
-            className={`py-2.5 sm:py-3 px-3 rounded-xl font-black text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-md active:scale-[0.98] ${
+            className={`h-10 sm:h-11 px-2.5 rounded-xl font-black text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-md active:scale-[0.98] ${
               cart.length > 0
                 ? 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-emerald-600/20'
                 : 'bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-600 opacity-60 cursor-not-allowed shadow-none'
             }`}
           >
             <Banknote className="w-4 h-4 shrink-0" />
-            <span>{isUrdu ? 'فوری کیش' : 'Quick Cash'}</span>
+            <span className="truncate">{isUrdu ? 'فوری کیش' : 'Quick Cash'}</span>
           </button>
 
           {/* Multi-Tender & Khata Split */}
           <button
             onClick={() => setShowSplitModal(true)}
             disabled={cart.length === 0}
-            className={`py-2.5 sm:py-3 px-3 rounded-xl font-black text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-md active:scale-[0.98] ${
+            className={`h-10 sm:h-11 px-2.5 rounded-xl font-black text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-md active:scale-[0.98] ${
               cart.length > 0
                 ? 'bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white shadow-indigo-600/20'
                 : 'bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-600 opacity-60 cursor-not-allowed shadow-none'
             }`}
           >
             <CreditCard className="w-4 h-4 shrink-0" />
-            <span>{isUrdu ? 'کھاتہ / کارڈ' : 'Split / Khata'}</span>
+            <span className="truncate">{isUrdu ? 'کھاتہ / کارڈ' : 'Split / Khata'}</span>
           </button>
         </div>
       </div>
@@ -487,6 +500,14 @@ export function CartPanel() {
       )}
     </div>
   );
+
+  if (isMobileFullView) {
+    return (
+      <div className="w-full h-full flex flex-col overflow-hidden bg-white dark:bg-slate-900 shadow-xs">
+        {cartContent}
+      </div>
+    );
+  }
 
   return (
     <>

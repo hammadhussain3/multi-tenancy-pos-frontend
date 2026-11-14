@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   ShoppingCart,
   BookOpen,
@@ -28,8 +29,9 @@ function PosDashboard() {
     isUrdu,
     cart,
     cartTotal,
-    setIsMobileCartOpen,
   } = usePos();
+
+  const [mobilePosView, setMobilePosView] = useState<'catalog' | 'cart'>('catalog');
 
   const mobileNavItems: {
     id: ActiveTab;
@@ -74,7 +76,7 @@ function PosDashboard() {
   return (
     <div
       dir={isUrdu ? 'rtl' : 'ltr'}
-      className="h-screen w-screen flex flex-col bg-slate-100 dark:bg-[#0b0f19] text-slate-900 dark:text-slate-100 overflow-hidden transition-colors duration-200"
+      className="h-full w-full max-h-dvh flex flex-col bg-slate-100 dark:bg-[#0b0f19] text-slate-900 dark:text-slate-100 overflow-hidden select-none transition-colors duration-200"
     >
       {/* Global Multi-Tenant Header */}
       <TopHeader />
@@ -87,14 +89,56 @@ function PosDashboard() {
         {/* Dynamic View Container */}
         <main className="flex-1 flex flex-col overflow-hidden relative bg-slate-100 dark:bg-[#0b0f19] pb-16 lg:pb-0 transition-colors duration-200">
           {activeTab === 'pos' && (
-            <div className="flex-1 flex h-full overflow-hidden relative">
-              {/* Product Catalog & Search area */}
-              <div className="flex-1 flex flex-col p-2.5 sm:p-4 gap-2.5 sm:gap-3 overflow-hidden bg-slate-100 dark:bg-[#0b0f19]">
+            <div className="flex-1 flex flex-col lg:flex-row h-full overflow-hidden relative">
+              {/* On screens < lg: Top Segmented Switcher (Catalog vs Order/Cart) */}
+              <div className="lg:hidden shrink-0 px-2.5 pt-2 pb-1 bg-slate-100 dark:bg-[#0b0f19] flex items-center gap-2">
+                <div className="flex-1 flex items-center p-1 bg-slate-200/80 dark:bg-slate-800 rounded-xl">
+                  <button
+                    onClick={() => setMobilePosView('catalog')}
+                    className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                      mobilePosView === 'catalog'
+                        ? 'bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-xs'
+                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
+                    }`}
+                  >
+                    <Package className="w-3.5 h-3.5" />
+                    <span>{isUrdu ? 'پروڈکٹس' : 'Catalog'}</span>
+                  </button>
+
+                  <button
+                    onClick={() => setMobilePosView('cart')}
+                    className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                      mobilePosView === 'cart'
+                        ? 'bg-white dark:bg-slate-700 text-emerald-700 dark:text-emerald-400 shadow-xs'
+                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
+                    }`}
+                  >
+                    <ShoppingCart className="w-3.5 h-3.5" />
+                    <span>{isUrdu ? 'آرڈر اور ادائیگی' : 'Order & Pay'}</span>
+                    <span
+                      className={`px-1.5 py-0.2 rounded-full text-[9px] font-black ${
+                        cart.length > 0
+                          ? 'bg-emerald-600 text-white'
+                          : 'bg-slate-300 dark:bg-slate-600 text-slate-700 dark:text-slate-300'
+                      }`}
+                    >
+                      PKR {cartTotal.toLocaleString()}
+                    </span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Product Catalog & Search area (Always visible on lg:, visible on < lg when mobilePosView === 'catalog') */}
+              <div
+                className={`flex-1 flex-col p-2.5 sm:p-4 gap-2.5 sm:gap-3 overflow-hidden bg-slate-100 dark:bg-[#0b0f19] ${
+                  mobilePosView === 'cart' ? 'hidden lg:flex' : 'flex'
+                }`}
+              >
                 <BarcodeSearch />
                 <ProductCatalog />
 
                 {/* Mobile Floating Cart Action Bar */}
-                {cart.length > 0 && (
+                {cart.length > 0 && mobilePosView === 'catalog' && (
                   <div className="lg:hidden shrink-0 p-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-lg flex items-center justify-between transition-all">
                     <div className="flex items-center gap-2">
                       <div className="w-9 h-9 rounded-xl bg-indigo-50 dark:bg-indigo-950/80 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold text-xs relative">
@@ -114,7 +158,7 @@ function PosDashboard() {
                     </div>
 
                     <button
-                      onClick={() => setIsMobileCartOpen(true)}
+                      onClick={() => setMobilePosView('cart')}
                       className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-md shadow-indigo-600/20 active:scale-95 transition-all cursor-pointer"
                     >
                       <span>{isUrdu ? 'بل دیکھیں اور ادا کریں' : 'View Cart & Pay'}</span>
@@ -124,8 +168,18 @@ function PosDashboard() {
                 )}
               </div>
 
-              {/* POS Cart & Checkout Panel */}
-              <CartPanel />
+              {/* Mobile Full Cart View on < lg */}
+              {mobilePosView === 'cart' && (
+                <div className="lg:hidden flex-1 h-full overflow-hidden">
+                  <CartPanel
+                    isMobileFullView={true}
+                    onBackToCatalog={() => setMobilePosView('catalog')}
+                  />
+                </div>
+              )}
+
+              {/* Desktop Persistent Cart Panel */}
+              <CartPanel isMobileFullView={false} />
             </div>
           )}
 
@@ -144,7 +198,12 @@ function PosDashboard() {
           return (
             <button
               key={item.id}
-              onClick={() => setActiveTab(item.id)}
+              onClick={() => {
+                setActiveTab(item.id);
+                if (item.id === 'pos') {
+                  setMobilePosView('catalog');
+                }
+              }}
               className={`flex flex-col items-center justify-center flex-1 py-1 px-1 rounded-xl text-[10px] font-semibold transition-all cursor-pointer relative ${
                 isActive
                   ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50/80 dark:bg-indigo-950/60 font-bold'
@@ -152,7 +211,13 @@ function PosDashboard() {
               }`}
             >
               <div className="relative">
-                <Icon className={`w-4 h-4 ${isActive ? 'text-indigo-600 dark:text-indigo-400 stroke-2' : 'text-slate-500 dark:text-slate-400'}`} />
+                <Icon
+                  className={`w-4 h-4 ${
+                    isActive
+                      ? 'text-indigo-600 dark:text-indigo-400 stroke-2'
+                      : 'text-slate-500 dark:text-slate-400'
+                  }`}
+                />
                 {item.badge !== undefined && (
                   <span className="absolute -top-1.5 -right-2 px-1 py-0.2 rounded-full text-[8px] font-black bg-rose-600 text-white min-w-[14px] text-center">
                     {item.badge}
