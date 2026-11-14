@@ -1,3 +1,4 @@
+import { useState, useMemo } from 'react';
 import { usePos } from '../../context/usePos';
 import {
   Trash2,
@@ -8,6 +9,7 @@ import {
   CheckCircle2,
   ScanLine,
 } from 'lucide-react';
+import { DataTablePagination } from '../common/DataTablePagination';
 
 export function ProductCatalog() {
   const {
@@ -18,6 +20,18 @@ export function ProductCatalog() {
     lastScannedItem,
     isUrdu,
   } = usePos();
+
+  // Scanned Register Pagination (Default: 10 records per page)
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  const totalPages = Math.max(1, Math.ceil(cart.length / pageSize));
+  const validPage = Math.min(Math.max(1, currentPage), totalPages);
+
+  const paginatedCart = useMemo(() => {
+    const start = (validPage - 1) * pageSize;
+    return cart.slice(start, start + pageSize);
+  }, [cart, validPage, pageSize]);
 
   return (
     <div className="flex-1 min-h-0 flex flex-col gap-2 overflow-hidden">
@@ -88,8 +102,9 @@ export function ProductCatalog() {
             </div>
           </div>
         ) : (
-          /* Scanned Items Table */
-          <div className="flex-1 min-h-0 overflow-y-auto">
+          <>
+            {/* Scanned Items Table */}
+            <div className="flex-1 min-h-0 overflow-y-auto">
             <table className="w-full text-left border-collapse">
               <thead className="sticky top-0 bg-slate-50 dark:bg-slate-800/90 backdrop-blur-xs border-b border-slate-200 dark:border-slate-700/80 z-10 text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
                 <tr>
@@ -104,14 +119,14 @@ export function ProductCatalog() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                {cart.map((item, idx) => (
+                {paginatedCart.map((item, idx) => (
                   <tr
                     key={item.product.id}
                     className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors group"
                   >
                     {/* Line Index */}
                     <td className="py-2.5 px-3 text-center text-xs font-mono text-slate-400 font-semibold">
-                      {idx + 1}
+                      {(validPage - 1) * pageSize + idx + 1}
                     </td>
 
                     {/* Product Name & Barcode */}
@@ -198,6 +213,21 @@ export function ProductCatalog() {
               </tbody>
             </table>
           </div>
+
+            {/* Scanned Items Pagination Bar (Default: 10 items per page) */}
+            {cart.length > pageSize && (
+              <DataTablePagination
+                currentPage={validPage}
+                totalPages={totalPages}
+                pageSize={pageSize}
+                totalItems={cart.length}
+                onPageChange={setCurrentPage}
+                onPageSizeChange={setPageSize}
+                isUrdu={isUrdu}
+                itemLabel="items"
+              />
+            )}
+          </>
         )}
       </div>
     </div>

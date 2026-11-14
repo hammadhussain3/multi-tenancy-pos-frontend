@@ -16,6 +16,7 @@ import {
 import writeXlsxFile, { type SheetData } from 'write-excel-file/browser';
 import { usePos } from '../../context/usePos';
 import type { Invoice, Product } from '../../types/pos';
+import { DataTablePagination } from '../common/DataTablePagination';
 
 type DateFilterPreset = 'today' | 'yesterday' | 'week' | 'this_month' | 'last_month' | 'custom';
 type ReportTab = 'performance' | 'stock_health' | 'ai_insights';
@@ -55,7 +56,21 @@ export function ReportsAnalyticsView() {
 
   const { preset, startDate, endDate, daysInPeriod } = dateBounds;
 
+  const [activeReportTab, setActiveReportTab] = useState<ReportTab>('performance');
+  const [stockHealthFilter, setStockHealthFilter] = useState<'all' | 'critical' | 'healthy'>('all');
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [isExporting, setIsExporting] = useState<boolean>(false);
+
+  // Table Pagination State (Default: 10 records per page as requested)
+  const [salesPage, setSalesPage] = useState<number>(1);
+  const [salesPageSize, setSalesPageSize] = useState<number>(10);
+
+  const [stockPage, setStockPage] = useState<number>(1);
+  const [stockPageSize, setStockPageSize] = useState<number>(10);
+
   const handleSelectPreset = useCallback((p: DateFilterPreset) => {
+    setSalesPage(1);
+    setStockPage(1);
     const now = new Date();
     const todayStr = now.toISOString().split('T')[0];
 
@@ -85,6 +100,8 @@ export function ReportsAnalyticsView() {
   }, []);
 
   const handleCustomDateChange = useCallback((newStart: string, newEnd: string) => {
+    setSalesPage(1);
+    setStockPage(1);
     const s = new Date(newStart);
     const e = new Date(newEnd);
     const diff = Math.max(1, Math.round((e.getTime() - s.getTime()) / (1000 * 60 * 60 * 24)) + 1);
@@ -96,10 +113,11 @@ export function ReportsAnalyticsView() {
     });
   }, []);
 
-  const [activeReportTab, setActiveReportTab] = useState<ReportTab>('performance');
-  const [stockHealthFilter, setStockHealthFilter] = useState<'all' | 'critical' | 'healthy'>('all');
-  const [searchTerm, setSearchTerm] = useState<string>('');
-  const [isExporting, setIsExporting] = useState<boolean>(false);
+  const handleSearchChange = useCallback((value: string) => {
+    setSearchTerm(value);
+    setSalesPage(1);
+    setStockPage(1);
+  }, []);
 
   // Filter Invoices in the Selected Date Range
   const filteredInvoices = useMemo(() => {
@@ -393,6 +411,24 @@ export function ReportsAnalyticsView() {
     return list;
   }, [productStats, stockHealthFilter, searchTerm]);
 
+  // Tab 1 Pagination Slicing (Product Sales)
+  const totalSalesCount = displayedProductStats.length;
+  const totalSalesPages = Math.max(1, Math.ceil(totalSalesCount / salesPageSize));
+  const validSalesPage = Math.min(salesPage, totalSalesPages);
+  const paginatedProductStats = useMemo(() => {
+    const start = (validSalesPage - 1) * salesPageSize;
+    return displayedProductStats.slice(start, start + salesPageSize);
+  }, [displayedProductStats, validSalesPage, salesPageSize]);
+
+  // Tab 2 Pagination Slicing (Stock Health)
+  const totalStockCount = displayedStockHealth.length;
+  const totalStockPages = Math.max(1, Math.ceil(totalStockCount / stockPageSize));
+  const validStockPage = Math.min(stockPage, totalStockPages);
+  const paginatedStockHealth = useMemo(() => {
+    const start = (validStockPage - 1) * stockPageSize;
+    return displayedStockHealth.slice(start, start + stockPageSize);
+  }, [displayedStockHealth, validStockPage, stockPageSize]);
+
   return (
     <div className="flex-1 min-h-0 flex flex-col p-2.5 sm:p-4 gap-3 bg-slate-100 dark:bg-[#0b0f19] overflow-hidden select-none">
       {/* 1. Header & Date Range Filter Toolbar */}
@@ -608,7 +644,7 @@ export function ReportsAnalyticsView() {
           <input
             type="text"
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) => handleSearchChange(e.target.value)}
             placeholder="Search product / category..."
             className="w-full px-2.5 py-1 text-xs rounded-xl bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500"
           />
@@ -634,19 +670,21 @@ export function ReportsAnalyticsView() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                {displayedProductStats.length === 0 ? (
+                {totalSalesCount === 0 ? (
                   <tr>
                     <td colSpan={9} className="py-8 text-center text-slate-400">
                       No sales records found for this period.
                     </td>
                   </tr>
                 ) : (
-                  displayedProductStats.map((stat, idx) => (
+                  paginatedProductStats.map((stat, idx) => (
                     <tr
                       key={stat.product.id}
                       className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors"
                     >
-                      <td className="py-2.5 px-3 font-mono font-bold text-slate-500">#{idx + 1}</td>
+                      <td className="py-2.5 px-3 font-mono font-bold text-slate-500">
+                        #{(validSalesPage - 1) * salesPageSize + idx + 1}
+                      </td>
                       <td className="py-2.5 px-3">
                         <div className="font-bold text-slate-900 dark:text-slate-100">{stat.product.name}</div>
                         <div className="text-[10px] text-slate-400 font-mono">{stat.product.barcode}</div>
@@ -712,16 +750,31 @@ export function ReportsAnalyticsView() {
               </tbody>
             </table>
           </div>
+
+          {/* DataTable Pagination (Default: 10 records per page) */}
+          <DataTablePagination
+            currentPage={validSalesPage}
+            totalPages={totalSalesPages}
+            pageSize={salesPageSize}
+            totalItems={totalSalesCount}
+            onPageChange={setSalesPage}
+            onPageSizeChange={setSalesPageSize}
+            isUrdu={isUrdu}
+            itemLabel="products"
+          />
         </div>
       )}
 
       {/* 5. Tab 2: Inventory Health & Stock Runway Table */}
       {activeReportTab === 'stock_health' && (
-        <div className="flex-1 min-h-0 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xs overflow-hidden flex flex-col space-y-2 p-3">
-          <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800 shrink-0">
+        <div className="flex-1 min-h-0 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xs overflow-hidden flex flex-col">
+          <div className="flex items-center justify-between p-3 pb-2.5 border-b border-slate-100 dark:border-slate-800 shrink-0">
             <div className="flex items-center gap-1.5">
               <button
-                onClick={() => setStockHealthFilter('all')}
+                onClick={() => {
+                  setStockHealthFilter('all');
+                  setStockPage(1);
+                }}
                 className={`px-2.5 py-1 rounded-lg text-xs font-bold cursor-pointer ${
                   stockHealthFilter === 'all'
                     ? 'bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-slate-100'
@@ -731,7 +784,10 @@ export function ReportsAnalyticsView() {
                 All Stock ({products.length})
               </button>
               <button
-                onClick={() => setStockHealthFilter('critical')}
+                onClick={() => {
+                  setStockHealthFilter('critical');
+                  setStockPage(1);
+                }}
                 className={`px-2.5 py-1 rounded-lg text-xs font-bold cursor-pointer ${
                   stockHealthFilter === 'critical'
                     ? 'bg-rose-100 dark:bg-rose-950/80 text-rose-700 dark:text-rose-400'
@@ -741,7 +797,10 @@ export function ReportsAnalyticsView() {
                 Critical Low / Out of Stock ({criticalStockCount})
               </button>
               <button
-                onClick={() => setStockHealthFilter('healthy')}
+                onClick={() => {
+                  setStockHealthFilter('healthy');
+                  setStockPage(1);
+                }}
                 className={`px-2.5 py-1 rounded-lg text-xs font-bold cursor-pointer ${
                   stockHealthFilter === 'healthy'
                     ? 'bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-400'
@@ -771,73 +830,93 @@ export function ReportsAnalyticsView() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                {displayedStockHealth.map((stat) => {
-                  const isRunoutAlert = stat.runwayDays !== null && stat.runwayDays <= 3;
-                  const reorderSuggestion =
-                    stat.product.currentStock <= stat.product.minStockAlert
-                      ? Math.max(stat.product.minStockAlert * 3, 20)
-                      : 0;
+                {totalStockCount === 0 ? (
+                  <tr>
+                    <td colSpan={8} className="py-8 text-center text-slate-400">
+                      No inventory records found.
+                    </td>
+                  </tr>
+                ) : (
+                  paginatedStockHealth.map((stat) => {
+                    const isRunoutAlert = stat.runwayDays !== null && stat.runwayDays <= 3;
+                    const reorderSuggestion =
+                      stat.product.currentStock <= stat.product.minStockAlert
+                        ? Math.max(stat.product.minStockAlert * 3, 20)
+                        : 0;
 
-                  return (
-                    <tr
-                      key={stat.product.id}
-                      className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors"
-                    >
-                      <td className="py-2.5 px-3">
-                        <div className="font-bold text-slate-900 dark:text-slate-100">{stat.product.name}</div>
-                        <div className="text-[10px] text-slate-400 font-mono">{stat.product.sku}</div>
-                      </td>
-                      <td className="py-2.5 px-3 text-slate-600 dark:text-slate-400">{stat.product.category}</td>
-                      <td className="py-2.5 px-3 text-right font-black text-slate-900 dark:text-slate-100">
-                        {stat.product.currentStock} {stat.product.unit}
-                      </td>
-                      <td className="py-2.5 px-3 text-right text-slate-500 font-semibold">
-                        {stat.product.minStockAlert} {stat.product.unit}
-                      </td>
-                      <td className="py-2.5 px-3 text-right font-bold text-indigo-600 dark:text-indigo-400">
-                        {stat.salesVelocityPerDay} / day
-                      </td>
-                      <td className="py-2.5 px-3 text-center">
-                        {stat.runwayDays === null ? (
-                          <span className="text-slate-400 font-medium">Idle</span>
-                        ) : isRunoutAlert ? (
-                          <span className="font-black text-rose-600 animate-pulse">
-                            {stat.runwayDays} days left!
-                          </span>
-                        ) : (
-                          <span className="font-bold text-emerald-600">{stat.runwayDays} days</span>
-                        )}
-                      </td>
-                      <td className="py-2.5 px-3 text-center">
-                        {stat.stockStatus === 'out_of_stock' ? (
-                          <span className="px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 text-[10px] font-bold border border-rose-200">
-                            Out of Stock
-                          </span>
-                        ) : stat.stockStatus === 'low' ? (
-                          <span className="px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 text-[10px] font-bold border border-amber-200">
-                            Low Stock
-                          </span>
-                        ) : (
-                          <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold border border-emerald-200">
-                            Healthy
-                          </span>
-                        )}
-                      </td>
-                      <td className="py-2.5 px-3 text-right">
-                        {reorderSuggestion > 0 ? (
-                          <span className="font-black text-indigo-600 dark:text-indigo-400">
-                            +{reorderSuggestion} {stat.product.unit}
-                          </span>
-                        ) : (
-                          <span className="text-slate-400">—</span>
-                        )}
-                      </td>
-                    </tr>
-                  );
-                })}
+                    return (
+                      <tr
+                        key={stat.product.id}
+                        className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors"
+                      >
+                        <td className="py-2.5 px-3">
+                          <div className="font-bold text-slate-900 dark:text-slate-100">{stat.product.name}</div>
+                          <div className="text-[10px] text-slate-400 font-mono">{stat.product.sku}</div>
+                        </td>
+                        <td className="py-2.5 px-3 text-slate-600 dark:text-slate-400">{stat.product.category}</td>
+                        <td className="py-2.5 px-3 text-right font-black text-slate-900 dark:text-slate-100">
+                          {stat.product.currentStock} {stat.product.unit}
+                        </td>
+                        <td className="py-2.5 px-3 text-right text-slate-500 font-semibold">
+                          {stat.product.minStockAlert} {stat.product.unit}
+                        </td>
+                        <td className="py-2.5 px-3 text-right font-bold text-indigo-600 dark:text-indigo-400">
+                          {stat.salesVelocityPerDay} / day
+                        </td>
+                        <td className="py-2.5 px-3 text-center">
+                          {stat.runwayDays === null ? (
+                            <span className="text-slate-400 font-medium">Idle</span>
+                          ) : isRunoutAlert ? (
+                            <span className="font-black text-rose-600 animate-pulse">
+                              {stat.runwayDays} days left!
+                            </span>
+                          ) : (
+                            <span className="font-bold text-emerald-600">{stat.runwayDays} days</span>
+                          )}
+                        </td>
+                        <td className="py-2.5 px-3 text-center">
+                          {stat.stockStatus === 'out_of_stock' ? (
+                            <span className="px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 text-[10px] font-bold border border-rose-200">
+                              Out of Stock
+                            </span>
+                          ) : stat.stockStatus === 'low' ? (
+                            <span className="px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 text-[10px] font-bold border border-amber-200">
+                              Low Stock
+                            </span>
+                          ) : (
+                            <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold border border-emerald-200">
+                              Healthy
+                            </span>
+                          )}
+                        </td>
+                        <td className="py-2.5 px-3 text-right">
+                          {reorderSuggestion > 0 ? (
+                            <span className="font-black text-indigo-600 dark:text-indigo-400">
+                              +{reorderSuggestion} {stat.product.unit}
+                            </span>
+                          ) : (
+                            <span className="text-slate-400">—</span>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
               </tbody>
             </table>
           </div>
+
+          {/* DataTable Pagination (Default: 10 records per page) */}
+          <DataTablePagination
+            currentPage={validStockPage}
+            totalPages={totalStockPages}
+            pageSize={stockPageSize}
+            totalItems={totalStockCount}
+            onPageChange={setStockPage}
+            onPageSizeChange={setStockPageSize}
+            isUrdu={isUrdu}
+            itemLabel="products"
+          />
         </div>
       )}
 

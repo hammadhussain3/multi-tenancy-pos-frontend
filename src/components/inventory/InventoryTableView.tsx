@@ -13,6 +13,7 @@ import {
 import { usePos } from '../../context/usePos';
 import type { Product } from '../../types/pos';
 import { ProductModal } from './ProductModal';
+import { DataTablePagination } from '../common/DataTablePagination';
 
 export function InventoryTableView() {
   const { products, categories, adjustStock, deleteProduct, isUrdu } = usePos();
@@ -27,9 +28,9 @@ export function InventoryTableView() {
   const [adjustmentDelta, setAdjustmentDelta] = useState<number>(0);
   const [adjustmentReason, setAdjustmentReason] = useState<string>('Restock from supplier');
 
-  // Pagination for 10,000+ Mart Items Scale
+  // Pagination (Default: 10 records per page)
   const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 50;
+  const [pageSize, setPageSize] = useState(10);
 
   // Metrics
   const totalStockValueCost = products.reduce((acc, p) => acc + p.purchasePrice * p.currentStock, 0);
@@ -58,10 +59,11 @@ export function InventoryTableView() {
   }, [products, selectedCategory, search, stockFilter]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const validPage = Math.min(Math.max(1, currentPage), totalPages);
   const paginatedProducts = useMemo(() => {
-    const start = (currentPage - 1) * pageSize;
+    const start = (validPage - 1) * pageSize;
     return filtered.slice(start, start + pageSize);
-  }, [filtered, currentPage, pageSize]);
+  }, [filtered, validPage, pageSize]);
 
   const handleStockAdjustSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -132,7 +134,10 @@ export function InventoryTableView() {
             <input
               type="text"
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setCurrentPage(1);
+              }}
               placeholder="Filter by name, barcode, or SKU..."
               className="w-full pl-9 pr-3 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
             />
@@ -140,7 +145,10 @@ export function InventoryTableView() {
 
           <select
             value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
+            onChange={(e) => {
+              setSelectedCategory(e.target.value);
+              setCurrentPage(1);
+            }}
             className="px-3 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-xs text-slate-800 dark:text-slate-200 focus:outline-none cursor-pointer"
           >
             {categories.map((c) => (
@@ -154,7 +162,10 @@ export function InventoryTableView() {
         {/* Stock Filter Pills */}
         <div className="flex items-center gap-1.5 text-xs overflow-x-auto pb-0.5">
           <button
-            onClick={() => setStockFilter('all')}
+            onClick={() => {
+              setStockFilter('all');
+              setCurrentPage(1);
+            }}
             className={`px-2.5 py-1 rounded-lg font-medium transition-colors cursor-pointer ${
               stockFilter === 'all'
                 ? 'bg-indigo-600 text-white shadow-2xs font-semibold'
@@ -164,7 +175,10 @@ export function InventoryTableView() {
             All Stock ({products.length})
           </button>
           <button
-            onClick={() => setStockFilter('low')}
+            onClick={() => {
+              setStockFilter('low');
+              setCurrentPage(1);
+            }}
             className={`px-2.5 py-1 rounded-lg font-medium transition-colors cursor-pointer ${
               stockFilter === 'low'
                 ? 'bg-amber-600 text-white shadow-2xs font-semibold'
@@ -174,7 +188,10 @@ export function InventoryTableView() {
             Low ({lowStockCount})
           </button>
           <button
-            onClick={() => setStockFilter('out')}
+            onClick={() => {
+              setStockFilter('out');
+              setCurrentPage(1);
+            }}
             className={`px-2.5 py-1 rounded-lg font-medium transition-colors cursor-pointer ${
               stockFilter === 'out'
                 ? 'bg-rose-600 text-white shadow-2xs font-semibold'
@@ -325,33 +342,17 @@ export function InventoryTableView() {
           </table>
         </div>
 
-        {/* Pagination Bar for Mart Scale (10,000+ Items) */}
-        {filtered.length > pageSize && (
-          <div className="p-2.5 sm:p-3 border-t border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/40 flex items-center justify-between text-xs shrink-0">
-            <div className="text-slate-500 dark:text-slate-400 text-[11px]">
-              Showing {(currentPage - 1) * pageSize + 1} to {Math.min(currentPage * pageSize, filtered.length)} of {filtered.length.toLocaleString()} items
-            </div>
-            <div className="flex items-center gap-1.5">
-              <button
-                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                disabled={currentPage === 1}
-                className="px-2.5 py-1 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-semibold disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-50 cursor-pointer text-xs"
-              >
-                Previous
-              </button>
-              <span className="px-2 font-bold text-slate-800 dark:text-slate-200 text-[11px]">
-                Page {currentPage} of {totalPages}
-              </span>
-              <button
-                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                disabled={currentPage === totalPages}
-                className="px-2.5 py-1 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-semibold disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-50 cursor-pointer text-xs"
-              >
-                Next
-              </button>
-            </div>
-          </div>
-        )}
+        {/* DataTable Pagination (Default: 10 records per page) */}
+        <DataTablePagination
+          currentPage={validPage}
+          totalPages={totalPages}
+          pageSize={pageSize}
+          totalItems={filtered.length}
+          onPageChange={setCurrentPage}
+          onPageSizeChange={setPageSize}
+          isUrdu={isUrdu}
+          itemLabel="products"
+        />
       </div>
 
       {/* Stock Adjustment Modal */}

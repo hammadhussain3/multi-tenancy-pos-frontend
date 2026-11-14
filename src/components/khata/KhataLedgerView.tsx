@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   BookOpen,
   Search,
@@ -16,22 +16,38 @@ import {
 import { usePos } from '../../context/usePos';
 import type { Customer } from '../../types/pos';
 import { ReceivePaymentModal } from './ReceivePaymentModal';
+import { DataTablePagination } from '../common/DataTablePagination';
 
 export function KhataLedgerView() {
-  const { customers, customerLedgers, currentTenant } = usePos();
+  const { customers, customerLedgers, currentTenant, isUrdu } = usePos();
   const [selectedCustomerId, setSelectedCustomerId] = useState<string>(customers[0]?.id || '');
   const [searchCustomer, setSearchCustomer] = useState<string>('');
   const [activePaymentCustomer, setActivePaymentCustomer] = useState<Customer | null>(null);
   const [mobileTab, setMobileTab] = useState<'directory' | 'statement'>('directory');
 
-  const filteredCustomers = customers.filter(
-    (c) =>
-      c.name.toLowerCase().includes(searchCustomer.toLowerCase()) ||
-      c.phone.includes(searchCustomer)
-  );
+  // Ledger Table Pagination (Default: 10 records per page)
+  const [ledgerPage, setLedgerPage] = useState<number>(1);
+  const [ledgerPageSize, setLedgerPageSize] = useState<number>(10);
+
+  const filteredCustomers = useMemo(() => {
+    return customers.filter(
+      (c) =>
+        c.name.toLowerCase().includes(searchCustomer.toLowerCase()) ||
+        c.phone.includes(searchCustomer)
+    );
+  }, [customers, searchCustomer]);
 
   const activeCustomer = customers.find((c) => c.id === selectedCustomerId) || customers[0];
-  const activeLedger = activeCustomer ? customerLedgers[activeCustomer.id] || [] : [];
+  const activeLedger = useMemo(() => {
+    return activeCustomer ? customerLedgers[activeCustomer.id] || [] : [];
+  }, [activeCustomer, customerLedgers]);
+
+  const totalLedgerPages = Math.max(1, Math.ceil(activeLedger.length / ledgerPageSize));
+  const validLedgerPage = Math.min(Math.max(1, ledgerPage), totalLedgerPages);
+  const paginatedLedger = useMemo(() => {
+    const start = (validLedgerPage - 1) * ledgerPageSize;
+    return activeLedger.slice(start, start + ledgerPageSize);
+  }, [activeLedger, validLedgerPage, ledgerPageSize]);
 
   const totalOutstandingUdhaar = customers.reduce((sum, c) => sum + c.currentBalance, 0);
 
@@ -142,6 +158,7 @@ export function KhataLedgerView() {
                   key={customer.id}
                   onClick={() => {
                     setSelectedCustomerId(customer.id);
+                    setLedgerPage(1);
                     setMobileTab('statement');
                   }}
                   className={`w-full text-left p-3 rounded-xl border transition-all cursor-pointer ${
@@ -260,7 +277,7 @@ export function KhataLedgerView() {
                         </td>
                       </tr>
                     ) : (
-                      activeLedger.map((entry) => (
+                      paginatedLedger.map((entry) => (
                         <tr key={entry.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                           <td className="py-2.5 px-3 text-slate-500 dark:text-slate-400 text-[11px]">
                             {entry.date}
@@ -290,6 +307,18 @@ export function KhataLedgerView() {
                     )}
                   </tbody>
                 </table>
+
+                {/* DataTable Pagination (Default: 10 records per page) */}
+                <DataTablePagination
+                  currentPage={validLedgerPage}
+                  totalPages={totalLedgerPages}
+                  pageSize={ledgerPageSize}
+                  totalItems={activeLedger.length}
+                  onPageChange={setLedgerPage}
+                  onPageSizeChange={setLedgerPageSize}
+                  isUrdu={isUrdu}
+                  itemLabel="transactions"
+                />
               </div>
             </div>
           </div>

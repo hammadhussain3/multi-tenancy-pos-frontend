@@ -1,20 +1,34 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Receipt, Search, CheckCircle2, Clock, Eye, RotateCcw } from 'lucide-react';
 import { usePos } from '../../context/usePos';
 import type { Invoice } from '../../types/pos';
 import { ThermalReceiptModal } from '../pos/ThermalReceiptModal';
+import { DataTablePagination } from '../common/DataTablePagination';
 
 export function SalesHistoryView() {
-  const { invoices, refundInvoice } = usePos();
+  const { invoices, refundInvoice, isUrdu } = usePos();
   const [search, setSearch] = useState('');
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
 
-  const filtered = invoices.filter(
-    (inv) =>
-      inv.invoiceNo.toLowerCase().includes(search.toLowerCase()) ||
-      (inv.customer && inv.customer.name.toLowerCase().includes(search.toLowerCase())) ||
-      (inv.customer && inv.customer.phone.includes(search))
-  );
+  // Pagination (Default: 10 records per page)
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  const filtered = useMemo(() => {
+    return invoices.filter(
+      (inv) =>
+        inv.invoiceNo.toLowerCase().includes(search.toLowerCase()) ||
+        (inv.customer && inv.customer.name.toLowerCase().includes(search.toLowerCase())) ||
+        (inv.customer && inv.customer.phone.includes(search))
+    );
+  }, [invoices, search]);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const validPage = Math.min(Math.max(1, page), totalPages);
+  const paginatedInvoices = useMemo(() => {
+    const start = (validPage - 1) * pageSize;
+    return filtered.slice(start, start + pageSize);
+  }, [filtered, validPage, pageSize]);
 
   const totalSalesAmount = invoices.reduce((sum, inv) => sum + inv.grandTotal, 0);
 
@@ -53,7 +67,10 @@ export function SalesHistoryView() {
           <input
             type="text"
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
             placeholder="Search by invoice # or customer phone/name..."
             className="w-full pl-9 pr-3 py-1.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-300 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
           />
@@ -84,7 +101,7 @@ export function SalesHistoryView() {
                   </td>
                 </tr>
               ) : (
-                filtered.map((inv) => (
+                paginatedInvoices.map((inv) => (
                   <tr key={inv.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
                     <td className="py-2.5 px-3 font-bold text-slate-900 dark:text-slate-100">
                       <div>{inv.invoiceNo}</div>
@@ -191,6 +208,18 @@ export function SalesHistoryView() {
             </tbody>
           </table>
         </div>
+
+        {/* DataTable Pagination (Default: 10 records per page) */}
+        <DataTablePagination
+          currentPage={validPage}
+          totalPages={totalPages}
+          pageSize={pageSize}
+          totalItems={filtered.length}
+          onPageChange={setPage}
+          onPageSizeChange={setPageSize}
+          isUrdu={isUrdu}
+          itemLabel="invoices"
+        />
       </div>
 
       {/* Thermal Receipt Modal Preview */}
